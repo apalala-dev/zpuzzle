@@ -15,6 +15,10 @@ class Position extends Equatable implements Comparable<Position> {
   /// The y position.
   final int y;
 
+  int distance(Position other) {
+    return (x - other.x).abs() + (y - other.y).abs();
+  }
+
   @override
   List<Object> get props => [x, y];
 
@@ -32,6 +36,18 @@ class Position extends Equatable implements Comparable<Position> {
       } else {
         return 0;
       }
+    }
+  }
+
+  bool isValid(List<Position> lockedPositions, int dimension) {
+    if (x > 0 &&
+        x <= dimension &&
+        y > 0 &&
+        y <= dimension &&
+        !lockedPositions.contains(this)) {
+      return true;
+    } else {
+      return false;
     }
   }
 }

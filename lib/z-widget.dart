@@ -37,6 +37,7 @@ class ZWidget extends StatelessWidget {
   final int perspective;
   final bool z;
   final bool reverse;
+  final bool debug;
 
   const ZWidget({
     required this.child,
@@ -45,14 +46,15 @@ class ZWidget extends StatelessWidget {
     Key? key,
     this.depth = 1,
     this.direction = ZDirection.both,
-    this.eventRotation = 30,
-    this.xPercent = 0.3,
-    this.yPercent = 0.3,
+    this.eventRotation = 0,
+    this.xPercent = 0,
+    this.yPercent = 0,
     this.fade = false,
     this.layers = 4,
     this.perspective = 20,
     this.z = true,
     this.reverse = false,
+    this.debug = false,
   }) : super(key: key);
 
   @override
@@ -74,11 +76,13 @@ class ZWidget extends StatelessWidget {
                 xPercent: xPercent,
                 yPercent: yPercent,
                 reverse: false,
+                debug: debug,
               )),
     );
   }
 }
 
+// see https://pub.dev/packages/zflutter for an other way of doing it
 class _ZWidgetLayer extends StatelessWidget {
   final Widget child;
   final Widget belowChild;
@@ -93,40 +97,53 @@ class _ZWidgetLayer extends StatelessWidget {
   final double xPercent;
   final double yPercent;
   final double rotation;
+  final bool debug;
 
-  const _ZWidgetLayer(this.child,
-      {required this.belowChild,
-      required this.aboveChild,
-      required this.layer,
-      required this.nbLayers,
-      required this.direction,
-      required this.reverse,
-      required this.depth,
-      required this.perspective,
-      required this.fade,
-      required this.xPercent,
-      required this.yPercent,
-      required this.rotation});
+  const _ZWidgetLayer(
+    this.child, {
+    required this.belowChild,
+    required this.aboveChild,
+    required this.layer,
+    required this.nbLayers,
+    required this.direction,
+    required this.reverse,
+    required this.depth,
+    required this.perspective,
+    required this.fade,
+    required this.xPercent,
+    required this.yPercent,
+    required this.rotation,
+    this.debug = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     var percent = layer / nbLayers;
 
     // Shift the layer on the z axis
+
+    Widget layerChild;
     double zTranslation;
     int idxToHighlight;
     switch (direction) {
       case ZDirection.both:
         zTranslation = -(percent * depth) + depth / 2;
         idxToHighlight = nbLayers - 1;
+        layerChild = layer == nbLayers - 1
+            ? child
+            : layer < nbLayers / 2
+                ? belowChild
+                : aboveChild;
         break;
       case ZDirection.backwards:
-        zTranslation = -percent * depth;
-        idxToHighlight = nbLayers - 1;
-        break;
-      case ZDirection.forwards:
         zTranslation = -(percent * depth) + depth;
         idxToHighlight = 0;
+        layerChild = layer == nbLayers - 1 ? child : belowChild;
+        break;
+      case ZDirection.forwards:
+        zTranslation = -percent * depth;
+        idxToHighlight = nbLayers - 1;
+        layerChild = layer == nbLayers - 1 ? child : aboveChild;
         break;
     }
 
@@ -153,6 +170,10 @@ class _ZWidgetLayer extends StatelessWidget {
     //     child:
 
     // print("tilt: $xTilt, $yTilt");
+    if (debug) {
+      print("xTilt: ${xTilt/pi}, yTilt: $yTilt, zTranslation: $zTranslation");
+    }
+
 
     return Opacity(
       child: Transform(
@@ -160,12 +181,21 @@ class _ZWidgetLayer extends StatelessWidget {
           ..setEntry(3, 2, 0.001)
           ..rotateX(xTilt)
           ..rotateY(yTilt)
-          ..translate(0, 0, zTranslation * 25),
-        child: layer == idxToHighlight
-            ? child
-            : layer < (nbLayers/2)
-                ? belowChild
-                : aboveChild,
+          ..translate(0, 0, zTranslation),
+        child: layerChild,
+        alignment: FractionalOffset.center,
+      ),
+      opacity: fade ? percent / 2 : 1,
+    );
+
+    return Opacity(
+      child: Transform(
+        transform: Matrix4.identity()
+          ..setEntry(3, 2, 0.001)
+          ..rotateX(xTilt)
+          ..rotateY(yTilt)
+          ..translate(0, 0, zTranslation),
+        child: layerChild,
       ),
       opacity: fade ? percent / 2 : 1,
     );

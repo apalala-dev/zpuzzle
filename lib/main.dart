@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:slide_puzzle/game-screen.dart';
 import 'package:slide_puzzle/moving-star.dart';
+import 'package:slide_puzzle/new-game-screen.dart';
 import 'package:slide_puzzle/space-widget.dart';
 
 void main() {
@@ -37,9 +39,8 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       body: SafeArea(
         child: Center(
-            child: SpaceWidget(
+            child: NewGameScreen(
           key: _spaceKey,
-          title: 'Space Craft',
         )),
       ),
       floatingActionButton: FloatingActionButton(
@@ -47,10 +48,6 @@ class _MyHomePageState extends State<MyHomePage> {
           print("toto");
           setState(() {
             _spaceKey = UniqueKey();
-            // var base = MovingStar(Offset(-10, 0), 10, Colors.white, -1, -1, 1);
-            // base.changeDirectionToIntersect(
-            //     Offset.zero & MediaQuery.of(context).size, 0);
-            // print("newMovingStar: $base");
           });
         },
         tooltip: 'Nothing yet',

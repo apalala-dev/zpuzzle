@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'dart:math';
-import 'dart:ui';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_color/flutter_color.dart';
 import 'package:slide_puzzle/hover-effect.dart';
 import 'package:slide_puzzle/moving-star.dart';
@@ -12,6 +13,9 @@ import 'package:slide_puzzle/ztext.dart';
 import 'package:supercharged/supercharged.dart';
 import 'package:supercharged_dart/supercharged_dart.dart';
 import 'package:sensors_plus/sensors_plus.dart';
+import 'package:image/image.dart' as imglib;
+
+import 'model/puzzle.dart';
 
 class SpaceWidget extends StatefulWidget {
   const SpaceWidget({Key? key, required this.title}) : super(key: key);
@@ -30,6 +34,7 @@ class _SpaceWidgetState extends State<SpaceWidget> {
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       Size size = MediaQuery.of(context).size;
       var canvasRect = Offset.zero & size;
@@ -60,6 +65,7 @@ class _SpaceWidgetState extends State<SpaceWidget> {
         print("gyro: ${event.x}, ${event.y}, ${event.z}");
         _mousePosition = Offset(event.x * 100, event.y * 100);
       });
+      // _loadImage();
     });
   }
 
@@ -76,17 +82,13 @@ class _SpaceWidgetState extends State<SpaceWidget> {
         ? (_mousePosition!.dx - canvasRect.center.dx) / 5
         : 0.0);
 
-    Widget content = MouseRegion(
-      child: Stack(children: [
-        Positioned.fill(
-            child: CustomPaint(
-                painter: _GalaxyPainter(
-                    _movingStars,
-                    _timeSpent,
-                    Curves.linear.transform(cos(_timeSpent.toDouble()).abs()),
-                    _mousePosition))),
-        PuzzleBoardWidget(mousePosition: _mousePosition),
-      ]),
+    return MouseRegion(
+      child: CustomPaint(
+          painter: _GalaxyPainter(
+              _movingStars,
+              _timeSpent,
+              Curves.linear.transform(cos(_timeSpent.toDouble()).abs()),
+              _mousePosition)),
       onHover: (event) {
         // print("hover ${event.position}");
         // setState(() {
@@ -94,8 +96,6 @@ class _SpaceWidgetState extends State<SpaceWidget> {
         // });
       },
     );
-
-    return content;
   }
 }
 
@@ -299,10 +299,10 @@ class _GalaxyPainter extends CustomPainter {
   }
 
   Offset calculate(Path path, double value) {
-    PathMetrics pathMetrics = path.computeMetrics();
-    PathMetric pathMetric = pathMetrics.elementAt(0);
+    ui.PathMetrics pathMetrics = path.computeMetrics();
+    ui.PathMetric pathMetric = pathMetrics.elementAt(0);
     value = pathMetric.length * value;
-    Tangent? pos = pathMetric.getTangentForOffset(value);
+    ui.Tangent? pos = pathMetric.getTangentForOffset(value);
     return pos!.position;
   }
 

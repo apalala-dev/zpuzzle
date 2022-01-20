@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:equatable/equatable.dart';
+import 'package:slide_puzzle/model/position.dart';
 import 'package:slide_puzzle/model/tile.dart';
 
 // A 3x3 puzzle board visualization:
@@ -33,10 +35,98 @@ import 'package:slide_puzzle/model/tile.dart';
 /// {@endtemplate}
 class Puzzle extends Equatable {
   /// {@macro puzzle}
-  const Puzzle({required this.tiles});
+  Puzzle({required this.tiles}) {
+    _nbMovesSink = _nbMovesSteamController.sink;
+  }
+
+  static Puzzle generate(int size, {bool shuffle = true}) {
+    /// Build a randomized, solvable puzzle of the given size.
+    final correctPositions = <Position>[];
+    final currentPositions = <Position>[];
+    final whitespacePosition = Position(x: size, y: size);
+
+    // Create all possible board positions.
+    for (var y = 1; y <= size; y++) {
+      for (var x = 1; x <= size; x++) {
+        if (x == size && y == size) {
+          correctPositions.add(whitespacePosition);
+          currentPositions.add(whitespacePosition);
+        } else {
+          final position = Position(x: x, y: y);
+          correctPositions.add(position);
+          currentPositions.add(position);
+        }
+      }
+    }
+
+    if (shuffle) {
+      // Randomize only the current tile positions.
+      currentPositions.shuffle();
+    }
+
+    var tiles = _getTileListFromPositions(
+      size,
+      correctPositions,
+      currentPositions,
+    );
+
+    var puzzle = Puzzle(tiles: tiles);
+
+    if (shuffle) {
+      // Assign the tiles new current positions until the puzzle is solvable and
+      // zero tiles are in their correct position.
+      while (!puzzle.isSolvable() || puzzle.getNumberOfCorrectTiles() != 0) {
+        currentPositions.shuffle();
+        tiles = _getTileListFromPositions(
+          size,
+          correctPositions,
+          currentPositions,
+        );
+        puzzle = Puzzle(tiles: tiles);
+      }
+    }
+
+    return puzzle;
+  }
+
+  /// Build a list of tiles - giving each tile their correct position and a
+  /// current position.
+  static List<Tile> _getTileListFromPositions(
+    int size,
+    List<Position> correctPositions,
+    List<Position> currentPositions,
+  ) {
+    final whitespacePosition = Position(x: size, y: size);
+    return [
+      for (int i = 1; i <= size * size; i++)
+        if (i == size * size)
+          Tile(
+            value: i,
+            correctPosition: whitespacePosition,
+            currentPosition: currentPositions[i - 1],
+            isWhitespace: true,
+          )
+        else
+          Tile(
+            value: i,
+            correctPosition: correctPositions[i - 1],
+            currentPosition: currentPositions[i - 1],
+          )
+    ];
+  }
 
   /// List of [Tile]s representing the puzzle's current arrangement.
   final List<Tile> tiles;
+
+  int _nbMoves = 0;
+  final StreamController<int> _nbMovesSteamController = StreamController<int>();
+
+  Stream<int> get nbMovesStream => _nbMovesSteamController.stream;
+  late Sink<int> _nbMovesSink;
+
+  Puzzle clone() {
+    return Puzzle(tiles: [...tiles]);
+  }
 
   /// Get the dimension of a puzzle given its tile arrangement.
   ///
@@ -83,6 +173,28 @@ class Puzzle extends Equatable {
       return false;
     }
     return true;
+  }
+
+  /// Determines if the tapped tile can move in the direction of the whitespace
+  /// tile.
+  bool isTileMovableTowards(Tile tile, Position dest) {
+    final whitespaceTile = getWhitespaceTile();
+    if (tile == whitespaceTile) {
+      return false;
+    }
+
+    // A tile must be in the same row or column as the whitespace to move.
+    if (whitespaceTile.currentPosition.x != tile.currentPosition.x &&
+        whitespaceTile.currentPosition.y != tile.currentPosition.y) {
+      return false;
+    } else {
+      if (whitespaceTile.currentPosition.distance(dest) <
+          tile.currentPosition.distance(dest)) {
+        return true;
+      } else {
+        return false;
+      }
+    }
   }
 
   /// Determines if the puzzle is solvable.
@@ -149,6 +261,9 @@ class Puzzle extends Equatable {
   // Recursively stores a list of all tiles that need to be moved and passes the
   // list to _swapTiles to individually swap them.
   Puzzle moveTiles(Tile tile, List<Tile> tilesToSwap) {
+    if (tilesToSwap.isEmpty) {
+      _nbMovesSink.add(++_nbMoves);
+    }
     final whitespaceTile = getWhitespaceTile();
     final deltaX = whitespaceTile.currentPosition.x - tile.currentPosition.x;
     final deltaY = whitespaceTile.currentPosition.y - tile.currentPosition.y;
@@ -197,6 +312,89 @@ class Puzzle extends Equatable {
         return tileA.currentPosition.compareTo(tileB.currentPosition);
       });
     return Puzzle(tiles: sortedTiles);
+  }
+
+  List<Tile>? shortestPathBetween(
+      Tile start, Tile end, List<Position> lockedPositions, int dimension,
+      {int? minFound}) {
+    if (minFound == 0) {
+      return null;
+    }
+    List<List<Tile>> paths = [];
+    // Find the shortest path between this and other while not going through any
+    // lockedPositions in a grid of [dimension] (ignoring White Tile)
+    List<Position> possibleMoves = List<Position>.from([
+      start.left(lockedPositions, dimension),
+      start.top(lockedPositions, dimension),
+      start.right(lockedPositions, dimension),
+      start.bottom(lockedPositions, dimension),
+    ].where((e) => e != null));
+    possibleMoves.sort((m1, m2) {
+      return m1
+          .distance(end.currentPosition)
+          .compareTo(m2.distance(end.currentPosition));
+    });
+
+    for (var p in possibleMoves) {
+      if (p == end) {
+        paths.add([
+          tiles.firstWhere((t) => t.currentPosition == p),
+        ]);
+        break;
+      } else {
+        var shortestTmp = shortestPathBetween(
+            tiles.firstWhere((t) => t.currentPosition == p),
+            end,
+            lockedPositions,
+            dimension,
+            minFound: minFound == null ? null : minFound - 1);
+        if (shortestTmp != null) {
+          var totalPath = [
+            tiles.firstWhere((t) => t.currentPosition == p),
+            ...shortestTmp
+          ];
+          paths.add(totalPath);
+          if (minFound == null || minFound > totalPath.length) {
+            minFound = totalPath.length;
+          }
+        }
+      }
+    }
+
+    if (paths.isEmpty) {
+      return null;
+    } else {
+      var minPathLength = paths.map((p) => p.length).reduce(min);
+      return paths.where((p) => p.length == minPathLength).first;
+    }
+  }
+
+  String toVisualString() {
+    String str = "";
+    var dim = getDimension();
+    for (int j = 0; j < dim; j++) {
+      for (int k = 0; k < dim; k++) {
+        str += " -";
+      }
+      str += " \n";
+      for (int i = 1; i <= dim; i++) {
+        var baseIdx = i + j * dim;
+        var pos = tiles
+            .firstWhere((element) => element.value == baseIdx)
+            .correctPosition;
+        var actualTile =
+            tiles.firstWhere((element) => element.currentPosition == pos);
+        str += "|${actualTile.isWhitespace ? " " : actualTile.value}";
+        if (i == dim) {
+          str += "|\n";
+        }
+      }
+    }
+    for (int k = 0; k < dim; k++) {
+      str += " -";
+    }
+    str += " \n";
+    return str;
   }
 
   @override

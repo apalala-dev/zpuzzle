@@ -26,6 +26,8 @@ class Tile extends Equatable {
   /// Denotes if the [Tile] is the whitespace tile or not.
   final bool isWhitespace;
 
+  bool get isInCorrectPosition => currentPosition == correctPosition;
+
   /// Create a copy of this [Tile] with updated current position.
   Tile copyWith({required Position currentPosition}) {
     return Tile(
@@ -38,9 +40,38 @@ class Tile extends Equatable {
 
   @override
   List<Object> get props => [
-    value,
-    correctPosition,
-    currentPosition,
-    isWhitespace,
-  ];
+        value,
+        correctPosition,
+        currentPosition,
+        isWhitespace,
+      ];
+
+  Position? _move(
+      Position newPosition, List<Position> lockedPositions, int dimension) {
+    if (newPosition.isValid(lockedPositions, dimension)) {
+      return newPosition;
+    } else {
+      return null;
+    }
+  }
+
+  Position? left(List<Position> lockedPositions, int dimension) {
+    return _move(Position(x: currentPosition.x - 1, y: currentPosition.y),
+        lockedPositions, dimension);
+  }
+
+  Position? top(List<Position> lockedPositions, int dimension) {
+    return _move(Position(x: currentPosition.x, y: currentPosition.y - 1),
+        lockedPositions, dimension);
+  }
+
+  Position? right(List<Position> lockedPositions, int dimension) {
+    return _move(Position(x: currentPosition.x + 1, y: currentPosition.y),
+        lockedPositions, dimension);
+  }
+
+  Position? bottom(List<Position> lockedPositions, int dimension) {
+    return _move(Position(x: currentPosition.x, y: currentPosition.y + 1),
+        lockedPositions, dimension);
+  }
 }
