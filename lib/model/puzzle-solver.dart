@@ -56,80 +56,90 @@ class PuzzleSolver {
         lockedTiles.add(puzzle.tiles.firstWhere((e) => e.correctPosition == p));
       }
       // Now I need to place last tiles of the Row/Column
-
-      // Put both in a place where we can move them wherever we need later first
-      // Note: this adds more moves
-      var bottomRightCorner = Position(x: dim, y: dim);
-      var nextToBottomRightCorner =
-          Position(x: dim + (i.isEven ? 0 : -1), y: dim + (i.isEven ? -1 : 0));
-
-      var bottomRightCornerTile = puzzle.tiles.firstWhere(
-          (e) => e.correctPosition == posToTake[posToTake.length - 1]);
-      // var nextToBottomRightCornerTile = puzzle.tiles.firstWhere(
-      //     (e) => e.correctPosition == posToTake[posToTake.length - 2]);
-
-      puzzle = moveTileToPosition(puzzle, bottomRightCornerTile,
-          bottomRightCorner, [...lockedTiles.map((e) => e.correctPosition)]);
-
-      // Refresh tiles now that we moved them
-      bottomRightCornerTile = puzzle.tiles.firstWhere(
-          (e) => e.correctPosition == posToTake[posToTake.length - 1]);
-      // nextToBottomRightCornerTile = puzzle.tiles.firstWhere(
-      //     (e) => e.correctPosition == posToTake[posToTake.length - 2]);
-
-      // print(
-      //     "try to move ${nextToBottomRightCornerTile.value} to ${puzzle.tiles.firstWhere((t) => t.currentPosition == nextToBottomRightCorner).value} ($nextToBottomRightCorner) with i=$i");
-      // puzzle = moveTileToPosition(
-      //     puzzle,
-      //     nextToBottomRightCornerTile,
-      //     nextToBottomRightCorner,
-      //     [bottomRightCorner, ...lockedTiles.map((e) => e.correctPosition)]);
-
-      bottomRightCornerTile = puzzle.tiles.firstWhere(
-          (e) => e.correctPosition == posToTake[posToTake.length - 1]);
-      // nextToBottomRightCornerTile = puzzle.tiles.firstWhere(
-      //     (e) => e.correctPosition == posToTake[posToTake.length - 2]);
-
-      // Now place them in position to be moved into their correct position
-      // First put dim-1 tile on top right corner (for a Row) or bottom left corner (for a Column)
-      toMove = puzzle.tiles.firstWhere(
+      final notLastTile = puzzle.tiles.firstWhere(
           (e) => e.correctPosition == posToTake[posToTake.length - 2]);
-      puzzle = moveTileToPosition(
-          puzzle,
-          toMove,
-          posToTake[posToTake.length - 1],
-          lockedTiles.map((e) => e.correctPosition).toList());
-      var tmpLockedTile = posToTake[posToTake.length - 1];
-      // lockedTiles.add(puzzle.tiles.firstWhere((e) => e.correctPosition == p));
-
-      toMove = puzzle.tiles.firstWhere(
+      final lastTile = puzzle.tiles.firstWhere(
           (e) => e.correctPosition == posToTake[posToTake.length - 1]);
-      var secondLockedTile = Position(
-          x: toMove.correctPosition.x + (i.isOdd ? 0 : 1),
-          y: toMove.correctPosition.y + (i.isOdd ? 1 : 0));
-      puzzle = moveTileToPosition(puzzle, toMove, secondLockedTile,
-          [tmpLockedTile, ...lockedTiles.map((e) => e.correctPosition)]);
+      if (notLastTile.isInCorrectPosition && lastTile.isInCorrectPosition) {
+        // They are all already in good spot
+        lockedTiles.add(notLastTile);
+        lockedTiles.add(lastTile);
+      } else {
+        // Not on good spot
+        // Put both in a place where we can move them wherever we need later first
+        // Note: this adds more moves
+        var bottomRightCorner = Position(x: dim, y: dim);
+        var nextToBottomRightCorner = Position(
+            x: dim + (i.isEven ? 0 : -1), y: dim + (i.isEven ? -1 : 0));
 
-      // I need to put a whitespace in dim-1 correctPosition with both tiles locked
-      puzzle = moveWhiteTileTo(puzzle, posToTake[posToTake.length - 2], [
-        tmpLockedTile,
-        secondLockedTile,
-        ...lockedTiles.map((e) => e.correctPosition)
-      ]);
+        var bottomRightCornerTile = lastTile;
+        // var nextToBottomRightCornerTile = puzzle.tiles.firstWhere(
+        //     (e) => e.correctPosition == posToTake[posToTake.length - 2]);
 
-      // Move dim-1 tile to its correctPosition (one move only needed)
-      puzzle = puzzle.moveTiles(
-          puzzle.tiles.firstWhere((t) => t.currentPosition == tmpLockedTile),
-          []);
-      lockedTiles.add(puzzle.tiles.firstWhere(
-          (t) => t.currentPosition == posToTake[posToTake.length - 2]));
-      // Move dim tile to its correctPosition (one move only needed)
-      puzzle = puzzle.moveTiles(
-          puzzle.tiles.firstWhere((t) => t.currentPosition == secondLockedTile),
-          []);
-      lockedTiles.add(puzzle.tiles.firstWhere(
-          (t) => t.currentPosition == posToTake[posToTake.length - 1]));
-      // Row or column should be fixed now!
+        puzzle = moveTileToPosition(puzzle, bottomRightCornerTile,
+            bottomRightCorner, [...lockedTiles.map((e) => e.correctPosition)]);
+
+        // Refresh tiles now that we moved them
+        bottomRightCornerTile = puzzle.tiles.firstWhere(
+            (e) => e.correctPosition == posToTake[posToTake.length - 1]);
+        // nextToBottomRightCornerTile = puzzle.tiles.firstWhere(
+        //     (e) => e.correctPosition == posToTake[posToTake.length - 2]);
+
+        // print(
+        //     "try to move ${nextToBottomRightCornerTile.value} to ${puzzle.tiles.firstWhere((t) => t.currentPosition == nextToBottomRightCorner).value} ($nextToBottomRightCorner) with i=$i");
+        // puzzle = moveTileToPosition(
+        //     puzzle,
+        //     nextToBottomRightCornerTile,
+        //     nextToBottomRightCorner,
+        //     [bottomRightCorner, ...lockedTiles.map((e) => e.correctPosition)]);
+
+        // bottomRightCornerTile = puzzle.tiles.firstWhere(
+        //     (e) => e.correctPosition == posToTake[posToTake.length - 1]);
+        // nextToBottomRightCornerTile = puzzle.tiles.firstWhere(
+        //     (e) => e.correctPosition == posToTake[posToTake.length - 2]);
+
+        // Now place them in position to be moved into their correct position
+        // First put dim-1 tile on top right corner (for a Row) or bottom left corner (for a Column)
+        toMove = puzzle.tiles.firstWhere(
+            (e) => e.correctPosition == posToTake[posToTake.length - 2]);
+        puzzle = moveTileToPosition(
+            puzzle,
+            toMove,
+            posToTake[posToTake.length - 1],
+            lockedTiles.map((e) => e.correctPosition).toList());
+        var tmpLockedTile = posToTake[posToTake.length - 1];
+        // lockedTiles.add(puzzle.tiles.firstWhere((e) => e.correctPosition == p));
+
+        toMove = puzzle.tiles.firstWhere(
+            (e) => e.correctPosition == posToTake[posToTake.length - 1]);
+        var secondLockedTile = Position(
+            x: toMove.correctPosition.x + (i.isOdd ? 0 : 1),
+            y: toMove.correctPosition.y + (i.isOdd ? 1 : 0));
+        puzzle = moveTileToPosition(puzzle, toMove, secondLockedTile,
+            [tmpLockedTile, ...lockedTiles.map((e) => e.correctPosition)]);
+
+        // I need to put a whitespace in dim-1 correctPosition with both tiles locked
+        puzzle = moveWhiteTileTo(puzzle, posToTake[posToTake.length - 2], [
+          tmpLockedTile,
+          secondLockedTile,
+          ...lockedTiles.map((e) => e.correctPosition)
+        ]);
+
+        // Move dim-1 tile to its correctPosition (one move only needed)
+        puzzle = puzzle.moveTiles(
+            puzzle.tiles.firstWhere((t) => t.currentPosition == tmpLockedTile),
+            []);
+        lockedTiles.add(puzzle.tiles.firstWhere(
+            (t) => t.currentPosition == posToTake[posToTake.length - 2]));
+        // Move dim tile to its correctPosition (one move only needed)
+        puzzle = puzzle.moveTiles(
+            puzzle.tiles
+                .firstWhere((t) => t.currentPosition == secondLockedTile),
+            []);
+        lockedTiles.add(puzzle.tiles.firstWhere(
+            (t) => t.currentPosition == posToTake[posToTake.length - 1]));
+        // Row or column should be fixed now!
+      }
     }
 
     if (puzzle.tiles
@@ -139,9 +149,10 @@ class PuzzleSolver {
         .isEmpty) {
       // Tiles not in the 3x2 final grid are in good position
       // break;
-      print("we're good to go for the 3x2 grid");
+      // print("we're good to go for the 3x2 grid");
     }
     // return puzzle;
+    print("History before solving 3x2: ${puzzle.history.length}");
     return solve3x2(puzzle);
   }
 
@@ -168,7 +179,7 @@ class PuzzleSolver {
         puzzle = moveWhiteTileTo(puzzle,
             Position(x: white.currentPosition.x, y: dim - 1), baseLocked);
       }
-      print("A:\n${puzzle.toVisualString()}");
+      // print("A:\n${puzzle.toVisualString()}");
       prime4 =
           puzzle.tiles.firstWhere((t) => t.correctPosition == prime4EndPos);
       puzzle = moveTileToPosition(
@@ -177,7 +188,7 @@ class PuzzleSolver {
           puzzle.tiles.firstWhere((t) => t.correctPosition == prime1EndPos);
       prime4 =
           puzzle.tiles.firstWhere((t) => t.correctPosition == prime4EndPos);
-      print("B:\n${puzzle.toVisualString()}");
+      // print("B:\n${puzzle.toVisualString()}");
       var tmpWhite = puzzle.getWhitespaceTile();
       if (tmpWhite.currentPosition.x == dim) {
         puzzle = moveWhiteTileTo(
@@ -187,25 +198,25 @@ class PuzzleSolver {
                 y: tmpWhite.currentPosition.y),
             baseLocked);
       }
-      print("C:\n${puzzle.toVisualString()}");
+      // print("C:\n${puzzle.toVisualString()}");
       puzzle = moveTileToPosition(
           puzzle,
           puzzle.tiles.firstWhere((t) => t.correctPosition == prime1EndPos),
           prime4EndPos,
           baseLocked);
-      print("D:\n${puzzle.toVisualString()}");
+      // print("D:\n${puzzle.toVisualString()}");
       puzzle = moveTileToPosition(
           puzzle,
           puzzle.tiles.firstWhere((t) => t.correctPosition == prime4EndPos),
           Position(x: dim - 1, y: dim),
           [...baseLocked, prime4EndPos]);
-      print("E:\n${puzzle.toVisualString()}");
+      // print("E:\n${puzzle.toVisualString()}");
       puzzle = moveTileToPosition(
           puzzle,
           puzzle.tiles.firstWhere((t) => t.correctPosition == prime1EndPos),
           prime1EndPos,
           [...baseLocked, Position(x: dim - 1, y: dim)]);
-      print("F:\n${puzzle.toVisualString()}");
+      // print("F:\n${puzzle.toVisualString()}");
       puzzle = moveTileToPosition(
           puzzle,
           puzzle.tiles.firstWhere((t) => t.correctPosition == prime4EndPos),
@@ -223,7 +234,7 @@ class PuzzleSolver {
       //       (t) => t.currentPosition == Position(x: dim - 1, y: dim)),
       // );
     }
-    print("G:\n${puzzle.toVisualString()}");
+    // print("G:\n${puzzle.toVisualString()}");
 
     var locked = [
       ...baseLocked,
@@ -269,53 +280,64 @@ class PuzzleSolver {
     // Place topLeft and bottomLeft tiles in the scheme configuration above
     var firstToMove =
         puzzle.tiles.firstWhere((e) => e.correctPosition == topLeft);
-    puzzle = moveTileToPosition(
-        puzzle,
-        firstToMove,
-        Position(x: puzzle.getDimension() - 2, y: puzzle.getDimension()),
-        puzzle.tiles
-            .where((t) => !(t.currentPosition.x >= puzzle.getDimension() - 2 &&
-                t.currentPosition.y >= puzzle.getDimension() - 1))
-            .map((t) => t.currentPosition)
-            .toList());
-
-    firstToMove = puzzle.tiles.firstWhere((e) => e.correctPosition == topLeft);
     var secondToMove =
         puzzle.tiles.firstWhere((e) => e.correctPosition == bottomLeft);
-    puzzle = moveTileToPosition(puzzle, secondToMove,
-        Position(x: puzzle.getDimension() - 1, y: puzzle.getDimension()), [
-      ...puzzle.tiles
-          .where((t) => !(t.currentPosition.x >= puzzle.getDimension() - 2 &&
-              t.currentPosition.y >= puzzle.getDimension() - 1))
-          .map((t) => t.currentPosition),
-      firstToMove.currentPosition
-    ]);
-    firstToMove = puzzle.tiles.firstWhere((e) => e.correctPosition == topLeft);
-    secondToMove =
-        puzzle.tiles.firstWhere((e) => e.correctPosition == bottomLeft);
 
-    // Then move topLeft tile to its correct position
-    puzzle =
-        moveTileToPosition(puzzle, firstToMove, firstToMove.correctPosition, [
-      ...puzzle.tiles
-          .where((t) => !(t.currentPosition.x >= puzzle.getDimension() - 2 &&
-              t.currentPosition.y >= puzzle.getDimension() - 1))
-          .map((t) => t.currentPosition),
-      secondToMove.currentPosition
-    ]);
-    firstToMove = puzzle.tiles.firstWhere((e) => e.correctPosition == topLeft);
-    secondToMove =
-        puzzle.tiles.firstWhere((e) => e.correctPosition == bottomLeft);
+    // If topLeft and bottomLeft are in good position, don't move them
+    if (!(firstToMove.currentPosition == firstToMove.correctPosition &&
+        secondToMove.currentPosition == secondToMove.correctPosition)) {
+      puzzle = moveTileToPosition(
+          puzzle,
+          firstToMove,
+          Position(x: puzzle.getDimension() - 2, y: puzzle.getDimension()),
+          puzzle.tiles
+              .where((t) =>
+                  !(t.currentPosition.x >= puzzle.getDimension() - 2 &&
+                      t.currentPosition.y >= puzzle.getDimension() - 1))
+              .map((t) => t.currentPosition)
+              .toList());
 
-    // Then move bottomLeft tile to its correct position
-    puzzle =
-        moveTileToPosition(puzzle, secondToMove, secondToMove.correctPosition, [
-      ...puzzle.tiles
-          .where((t) => !(t.currentPosition.x >= puzzle.getDimension() - 2 &&
-              t.currentPosition.y >= puzzle.getDimension() - 1))
-          .map((t) => t.currentPosition),
-      firstToMove.currentPosition
-    ]);
+      firstToMove =
+          puzzle.tiles.firstWhere((e) => e.correctPosition == topLeft);
+      secondToMove =
+          puzzle.tiles.firstWhere((e) => e.correctPosition == bottomLeft);
+      puzzle = moveTileToPosition(puzzle, secondToMove,
+          Position(x: puzzle.getDimension() - 1, y: puzzle.getDimension()), [
+        ...puzzle.tiles
+            .where((t) => !(t.currentPosition.x >= puzzle.getDimension() - 2 &&
+                t.currentPosition.y >= puzzle.getDimension() - 1))
+            .map((t) => t.currentPosition),
+        firstToMove.currentPosition
+      ]);
+      firstToMove =
+          puzzle.tiles.firstWhere((e) => e.correctPosition == topLeft);
+      secondToMove =
+          puzzle.tiles.firstWhere((e) => e.correctPosition == bottomLeft);
+
+      // Then move topLeft tile to its correct position
+      puzzle =
+          moveTileToPosition(puzzle, firstToMove, firstToMove.correctPosition, [
+        ...puzzle.tiles
+            .where((t) => !(t.currentPosition.x >= puzzle.getDimension() - 2 &&
+                t.currentPosition.y >= puzzle.getDimension() - 1))
+            .map((t) => t.currentPosition),
+        secondToMove.currentPosition
+      ]);
+      firstToMove =
+          puzzle.tiles.firstWhere((e) => e.correctPosition == topLeft);
+      secondToMove =
+          puzzle.tiles.firstWhere((e) => e.correctPosition == bottomLeft);
+
+      // Then move bottomLeft tile to its correct position
+      puzzle = moveTileToPosition(
+          puzzle, secondToMove, secondToMove.correctPosition, [
+        ...puzzle.tiles
+            .where((t) => !(t.currentPosition.x >= puzzle.getDimension() - 2 &&
+                t.currentPosition.y >= puzzle.getDimension() - 1))
+            .map((t) => t.currentPosition),
+        firstToMove.currentPosition
+      ]);
+    }
 
     // topLeft and bottomLeft must be locked now
     var locked = [
@@ -341,10 +363,11 @@ class PuzzleSolver {
         puzzle, puzzle.getWhitespaceTile().correctPosition, locked);
   }
 
-  Puzzle moveTileToPosition(Puzzle basePuzzle, Tile tile, Position dest,
-      List<Position> lockedPosition) {
+  Puzzle moveTileToPosition(
+      Puzzle puzzle, Tile tile, Position dest, List<Position> lockedPosition) {
     // Should not move already well placed tiles
-    Puzzle puzzle = basePuzzle.clone();
+    if (tile.currentPosition == dest) return puzzle;
+    // Puzzle puzzle = basePuzzle.clone();
     var pathToDest = shortestPathBetween(
         puzzle,
         tile,
@@ -432,6 +455,9 @@ class PuzzleSolver {
 
   Puzzle moveWhiteTileTo(
       Puzzle puzzle, Position dest, List<Position> lockedPositions) {
+    if (puzzle.getWhitespaceTile().currentPosition == dest) {
+      return puzzle;
+    }
     var pathWhiteToP = shortestPathBetween(
         puzzle,
         puzzle.getWhitespaceTile(),

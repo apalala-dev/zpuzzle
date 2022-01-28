@@ -243,13 +243,25 @@ void main() {
     assert(puzzle.isComplete(), "Puzzle is not solved:\n${puzzle.toVisualString()}");
   });
 
+
+  test("Solve already solved puzzle 3x3", () {
+    // for(int i = 0;i< 100; i++) {
+      PuzzleSolver solver = PuzzleSolver();
+      Puzzle puzzle = Puzzle.generate(3, shuffle: false);
+      puzzle = solver.solve(puzzle);
+      print("Puzzle complete in ${puzzle.history.length} moves");
+      assert(puzzle.isComplete(), "Puzzle is not solved:\n${puzzle
+          .toVisualString()}");
+    // }
+  });
+
   test("Solve random puzzle 3x3", () {
-    for(int i = 0;i< 100; i++) {
+    for(int i = 0;i< 3; i++) {
       PuzzleSolver solver = PuzzleSolver();
       Puzzle puzzle = Puzzle.generate(3);
       puzzle = solver.solve(puzzle);
-      print("Puzzle complete:\n${puzzle.toVisualString()}");
-      assert(puzzle.isComplete(), "Puzzle is not solved:\n${puzzle
+      print("Puzzle complete in ${puzzle.history.length} moves");
+      assert(puzzle.isComplete(), "Puzzle $i is not solved:\n${puzzle
           .toVisualString()}");
     }
   });

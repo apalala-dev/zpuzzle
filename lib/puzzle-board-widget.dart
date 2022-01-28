@@ -13,10 +13,13 @@ import 'package:image/image.dart' as imglib;
 class PuzzleBoardWidget extends StatefulWidget {
   final Puzzle puzzle;
   final Offset? mousePosition;
-  final List<Image>? images;
+  final ImageProvider imageProvider;
+  final double imgSize;
   final double? xPercent;
   final double? yPercent;
-  final Animation<double> tileEnterAnimation;
+  final List<Animation<double>> tileEnterAnimation;
+  final List<Animation<double>> tileLetterDepthAnimation;
+  final List<Animation<double>> tileLetterFadeAnimation;
   final Animation<double> flipAnimation;
 
   const PuzzleBoardWidget({
@@ -24,8 +27,11 @@ class PuzzleBoardWidget extends StatefulWidget {
     required this.mousePosition,
     required this.puzzle,
     required this.tileEnterAnimation,
+    required this.tileLetterDepthAnimation,
+    required this.tileLetterFadeAnimation,
     required this.flipAnimation,
-    this.images,
+    required this.imageProvider,
+    required this.imgSize,
     this.xPercent,
     this.yPercent,
   }) : super(key: key);
@@ -75,24 +81,30 @@ class _PuzzleBoardWidgetState extends State<PuzzleBoardWidget> {
       yTilt = Tween<double>(begin: 2 * yTilt, end: yTilt)
           .evaluate(widget.flipAnimation);
 
-      var scaledTile =
-          Tween(begin: 0.1, end: 1).evaluate(widget.tileEnterAnimation);
-
       boardTiles = SizedBox(
         child: Stack(children: [
           ...List.generate(nbColumns * nbColumns, (idx) {
             var tile = widget.puzzle.tiles[idx];
+            var scaledTile = Tween(begin: 0.1, end: 1)
+                .evaluate(widget.tileEnterAnimation[tile.value - 1]);
+            var yOffset = -Tween(begin: -size.shortestSide, end: 0.0)
+                .evaluate(widget.tileEnterAnimation[tile.value - 1]);
+            var zOffset = Tween(begin: -size.shortestSide, end: 0.0)
+                .evaluate(widget.tileEnterAnimation[tile.value - 1]);
+            var percentDepthText =
+                widget.tileLetterDepthAnimation[tile.value - 1].value;
+            var percentOpacityText =
+                widget.tileLetterFadeAnimation[tile.value - 1].value;
             var content = SizedBox(
                 child: idx == nbColumns * nbColumns - 1
                     ? null
                     : Transform(
                         transform: Matrix4.identity()
                           ..translate(
-                              0,
-                              -Tween(begin: -1000.0, end: 0.0)
-                                  .evaluate(widget.tileEnterAnimation),
-                              Tween(begin: -1000.0, end: 0.0)
-                                  .evaluate(widget.tileEnterAnimation))
+                            0,
+                            yOffset,
+                            zOffset,
+                          )
                           ..scale(scaledTile),
                         child: PuzzleTileWidget(
                           tile.value,
@@ -101,14 +113,18 @@ class _PuzzleBoardWidgetState extends State<PuzzleBoardWidget> {
                           canvasRect: canvasRect,
                           tileSize: squareSize,
                           tileSpacing: tileSpacing,
-                          image: widget.images?[tile.value - 1],
+                          imageProvider: widget.imageProvider,
+                          imgSize: widget.imgSize,
+                          percentDepth: percentDepthText,
+                          percentOpacity: percentOpacityText,
+                          nbTiles: widget.puzzle.getDimension(),
                           onTap: () {
-                            print("Gonna move tile $tile");
+                            // print("Gonna move tile $tile");
                             if (widget.puzzle.isTileMovable(tile)) {
-                              print("movable tile $tile");
+                              // print("movable tile $tile");
                               setState(() {
                                 widget.puzzle.moveTiles(tile, []);
-                                print("tile moved $tile");
+                                // print("tile moved $tile");
                               });
                             }
                           },

@@ -11,9 +11,13 @@ class PuzzleTileWidget extends StatefulWidget {
   final VoidCallback onTap;
   final double tileSize;
   final double tileSpacing;
-  final Image? image;
+  final ImageProvider imageProvider;
   final double xTilt;
   final double yTilt;
+  final double percentDepth;
+  final double percentOpacity;
+  final int nbTiles;
+  final double imgSize;
 
   const PuzzleTileWidget(
     this.index, {
@@ -24,7 +28,11 @@ class PuzzleTileWidget extends StatefulWidget {
     required this.tileSpacing,
     required this.xTilt,
     required this.yTilt,
-    this.image,
+    required this.nbTiles,
+    required this.imageProvider,
+    required this.imgSize,
+    this.percentDepth = 1,
+    this.percentOpacity = 1,
   }) : super(key: key);
 
   @override
@@ -46,42 +54,54 @@ class _PuzzleTileWidgetState extends State<PuzzleTileWidget> {
       ]),
     );
 
-    text = ZWidget(
-      child: Text("${widget.index}",
-          style: TextStyle(fontSize: widget.tileSize / 2, color: Colors.white)),
-      aboveChild: Text("${widget.index}",
-          style: TextStyle(
-              fontSize: widget.tileSize / 2, color: HexColor("999999"))),
-      yPercent: widget.yTilt,
-      xPercent: widget.xTilt,
-      depth: 8,
-      direction: ZDirection.forwards,
-      layers: 15,
-    );
+    if (widget.percentDepth > 0) {
+      text = ZWidget(
+        child: Text("${widget.index}",
+            style:
+                TextStyle(fontSize: widget.tileSize / 2, color: Colors.white)),
+        aboveChild: Text("${widget.index}",
+            style: TextStyle(
+                fontSize: widget.tileSize / 2, color: HexColor("999999"))),
+        yPercent: widget.yTilt,
+        xPercent: widget.xTilt,
+        depth: widget.percentDepth * 10,
+        direction: ZDirection.forwards,
+        layers: 15,
+      );
+    } else {
+      text = Text(
+        "${widget.index}",
+        style: TextStyle(
+          fontSize: widget.tileSize / 2,
+          color: Colors.white.withOpacity(widget.percentOpacity),
+        ),
+      );
+    }
 
-    text = widget.image ?? text;
+    // text = widget.image ?? text;
 
-    var imgSize = 1668.0;
+    // var imgSize = 1668.0;
     var scaledDownSize =
         3 * widget.tileSize * MediaQuery.of(context).devicePixelRatio;
 
     // print(
     //     "($scaledDownSize * ($imgSize / 3)) / $imgSize = ${(scaledDownSize * (imgSize / 3)) / imgSize}");
 
-    var nbTiles = 3;
+    var nbTiles = widget.nbTiles;
     FractionalOffset fracOff = FractionalOffset(
         ((widget.index - 1) % nbTiles) * (1 / (nbTiles - 1)),
         ((widget.index - 1) ~/ nbTiles) * (1 / (nbTiles - 1)));
 
+    // const AssetImage("assets/img/moon.png")
     text = Container(
       width: widget.tileSize,
       height: widget.tileSize,
-      child: Center(child:text),
+      child: Center(child: text),
       decoration: BoxDecoration(
           image: DecorationImage(
-              image: const AssetImage("assets/img/moon.png"),
+              image: widget.imageProvider,
               fit: BoxFit.none,
-              scale: imgSize / (3 * widget.tileSize),
+              scale: widget.imgSize / (nbTiles * widget.tileSize),
               // scaledDownSize / ((scaledDownSize * (imgSize / 3)) / imgSize),
               alignment: fracOff)),
     );

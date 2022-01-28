@@ -124,10 +124,13 @@ class _GameScreenState extends State<GameScreen> {
           Expanded(
               child: PuzzleBoardWidget(
             mousePosition: _mousePosition,
-            tileEnterAnimation: const AlwaysStoppedAnimation<double>(1),
+            tileEnterAnimation: [const AlwaysStoppedAnimation<double>(1)],
+            tileLetterDepthAnimation: [const AlwaysStoppedAnimation<double>(1)],
+            tileLetterFadeAnimation: [const AlwaysStoppedAnimation<double>(1)],
             flipAnimation: const AlwaysStoppedAnimation<double>(1),
             puzzle: _puzzle,
-            images: _images,
+            imageProvider: const AssetImage("assets/img/moon.png"),
+            imgSize: 1668,
           )),
           Expanded(
               child: Column(

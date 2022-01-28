@@ -2,14 +2,19 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:flutter/cupertino.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_size_getter/image_size_getter.dart' as imgSizeGetter;
+import 'package:slide_puzzle/model/puzzle-solver.dart';
 import 'package:slide_puzzle/model/puzzle.dart';
 import 'package:slide_puzzle/puzzle-board-widget.dart';
 import 'package:image/image.dart' as imglib;
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:slide_puzzle/space-widget.dart';
+import 'package:slide_puzzle/ui/crop-dialog.dart';
+import 'package:slide_puzzle/ui/size-picker.dart';
+import 'package:supercharged_dart/supercharged_dart.dart';
 
 class NewGameScreen extends StatefulWidget {
   const NewGameScreen({Key? key}) : super(key: key);
@@ -21,8 +26,11 @@ class NewGameScreen extends StatefulWidget {
 }
 
 class _NewGameScreenState extends State<NewGameScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late Puzzle _puzzle;
+  int _puzzleSize = 3;
+  final totalAnim = 8000;
+  final tileEnterAnimTile = 700;
   Offset? _mousePosition;
   StreamSubscription<int>? _nbMovesListener;
   int _nbMoves = 0;
@@ -35,34 +43,19 @@ class _NewGameScreenState extends State<NewGameScreen>
   ];
   int _idxDashImg = 0;
 
-  late AnimationController _animationController;
-  late Animation<double> _tileEnterAnimation;
+  AnimationController? _animationController;
+  late List<Animation<double>> _tileEnterAnimation;
+  late List<Animation<double>> _letterDepthAnimation;
+  late List<Animation<double>> _letterFadeAnimation;
   late Animation<double> _flipAnimation;
+
+  bool _solving = false;
+  Uint8List? _pickedImageCropped;
+  double? _pickedImageSize;
 
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
-        vsync: this, duration: Duration(milliseconds: 3000));
-    _tileEnterAnimation =
-        Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: const Interval(
-        0.0,
-        0.5,
-        curve: Curves.ease,
-      ),
-    ));
-    _flipAnimation =
-        Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: const Interval(
-        0.5,
-        1.0,
-        curve: Curves.ease,
-      ),
-    ));
-
     _initPuzzle();
 
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
@@ -79,7 +72,7 @@ class _NewGameScreenState extends State<NewGameScreen>
 
   @override
   void dispose() {
-    _animationController.dispose();
+    _animationController?.dispose();
     super.dispose();
   }
 
@@ -131,12 +124,143 @@ class _NewGameScreenState extends State<NewGameScreen>
   }
 
   _initPuzzle() {
-    _puzzle = Puzzle.generate(3, shuffle: false);
+    _puzzle = Puzzle.generate(_puzzleSize, shuffle: true);
     _nbMovesListener?.cancel();
     _nbMovesListener = _puzzle.nbMovesStream.listen((e) {
       setState(() {
         _nbMoves = e;
       });
+    });
+    _initEnterAnim();
+  }
+
+  _initEnterAnim() {
+    final nbTiles = _puzzle.getDimension() * _puzzle.getDimension();
+
+    final tileEnterAnimTime = nbTiles * tileEnterAnimTile * 0.3;
+    const flipTime = 1200;
+    final tileTextDepthTime = nbTiles * tileEnterAnimTile * 0.1;
+    final tileTextOpacityTime = nbTiles * tileEnterAnimTile * 0.05;
+    var totalTime =
+        (tileEnterAnimTime + flipTime + tileTextDepthTime + tileTextOpacityTime)
+            .round();
+
+    final tilesAnimPart = tileEnterAnimTime / totalTime;
+    final textAnimPart = tileTextDepthTime / totalTime;
+    final textAnimFadePart = tileTextOpacityTime / totalTime;
+
+    _animationController?.dispose();
+    _animationController = AnimationController(
+        vsync: this, duration: Duration(milliseconds: totalTime));
+
+    final totalTimeTiles = tilesAnimPart * totalAnim;
+    final spacing =
+        (totalTimeTiles - (nbTiles - 1) * tileEnterAnimTile * 1.15) /
+            (nbTiles - 2);
+
+    _tileEnterAnimation = [
+      for (int i = 0; i < nbTiles; i++)
+        i == nbTiles - 1
+            ? const AlwaysStoppedAnimation<double>(1)
+            : Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+                parent: _animationController!,
+                curve: Interval(
+                  tilesAnimPart *
+                      (i * tileEnterAnimTile + i * spacing) /
+                      totalTimeTiles,
+                  tilesAnimPart *
+                      ((i + 1) * tileEnterAnimTile + i * spacing) /
+                      totalTimeTiles,
+                  curve: Curves.easeInBack,
+                ),
+              ))
+    ];
+
+    _flipAnimation =
+        Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+      parent: _animationController!,
+      curve: Interval(
+        tilesAnimPart,
+        1.0 - textAnimPart - textAnimFadePart,
+        // curve: Curves.fastOutSlowIn,
+        curve: Curves.easeInOutBack,
+      ),
+    ));
+
+    _letterDepthAnimation = [
+      for (int i = 0; i < nbTiles; i++)
+        i == nbTiles - 1
+            ? const AlwaysStoppedAnimation<double>(1)
+            : Tween<double>(begin: 1.0, end: 0.0).animate(CurvedAnimation(
+                parent: _animationController!,
+                curve: Interval(
+                  1.0 -
+                      textAnimPart -
+                      textAnimFadePart +
+                      textAnimPart *
+                          (i * tileEnterAnimTile + i * spacing) /
+                          totalTimeTiles,
+                  1.0 -
+                      textAnimPart -
+                      textAnimFadePart +
+                      textAnimPart *
+                          ((i + 1) * tileEnterAnimTile + i * spacing) /
+                          totalTimeTiles,
+                  curve: Curves.easeOut,
+                ),
+              ))
+    ];
+
+    _letterFadeAnimation = [
+      for (int i = 0; i < nbTiles; i++)
+        i == nbTiles - 1
+            ? const AlwaysStoppedAnimation<double>(1)
+            : Tween<double>(begin: 1.0, end: 0.0).animate(CurvedAnimation(
+                parent: _animationController!,
+                curve: Interval(
+                  1.0 -
+                      textAnimFadePart +
+                      textAnimFadePart *
+                          (i * tileEnterAnimTile + i * spacing) /
+                          totalTimeTiles,
+                  1.0 -
+                      textAnimFadePart +
+                      textAnimFadePart *
+                          ((i + 1) * tileEnterAnimTile + i * spacing) /
+                          totalTimeTiles,
+                  curve: Curves.easeOut,
+                ),
+              ))
+    ];
+  }
+
+  _solve() async {
+    setState(() {
+      _solving = true;
+    });
+    PuzzleSolver solver = PuzzleSolver();
+    var newPuzzle = solver.solve(_puzzle.clone());
+    print(
+        "Puzzle solved history : ${newPuzzle.history.length} - vs not solved puzzle history: ${_puzzle.history.length}");
+    print("new puzzle solved:\n${newPuzzle.toVisualString()}");
+    for (int i = max(_puzzle.history.length - 1, 0);
+        i < newPuzzle.history.length;
+        i++) {
+      if (!_solving) {
+        break;
+      }
+      var h = newPuzzle.history[i];
+      print(
+          "Move $i tile ${_puzzle.tiles.firstWhere((element) => element.currentPosition == h).value}");
+      await Future.delayed(Duration(milliseconds: 450));
+      setState(() {
+        _puzzle = _puzzle.moveTiles(
+            _puzzle.tiles.firstWhere((element) => element.currentPosition == h),
+            []);
+      });
+    }
+    setState(() {
+      _solving = false;
     });
   }
 
@@ -158,7 +282,7 @@ class _NewGameScreenState extends State<NewGameScreen>
             "Flutter Puzzle Hack",
             style: TextStyle(
               fontSize: MediaQuery.of(context).size.shortestSide / 20,
-              color: Colors.white,
+              color: Colors.black,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -175,8 +299,59 @@ class _NewGameScreenState extends State<NewGameScreen>
               ],
               style: TextStyle(
                 fontSize: MediaQuery.of(context).size.shortestSide / 24,
-                color: Colors.white,
+                color: Colors.black,
               ))),
+          SizedBox(
+            child: SizePicker(onSizePicked: (size) {
+              _puzzleSize = size;
+            }),
+            height: MediaQuery.of(context).size.height / 8,
+          ),
+          Row(children: [
+            if (_pickedImageCropped == null)
+              Image.asset(
+                "assets/img/moon.png",
+                width: 100,
+                height: 100,
+              )
+            else
+              Image.memory(
+                _pickedImageCropped!,
+                width: 100,
+                height: 100,
+              ),
+            ElevatedButton(
+                onPressed: () async {
+                  try {
+                    var _paths = (await FilePicker.platform.pickFiles(
+                      type: FileType.image,
+                      allowMultiple: false,
+                      onFileLoading: (FilePickerStatus status) => print(status),
+                    ))
+                        ?.files;
+                    if (_paths?.isNotEmpty == true) {
+                      var pickedImage = _paths!.first;
+                      var croppedImage = await CropDialog.show(context,
+                          imageData: pickedImage.bytes!);
+                      if (croppedImage != null) {
+                        var imgSize = imgSizeGetter.ImageSizeGetter.getSize(
+                            imgSizeGetter.MemoryInput(croppedImage));
+                        var shortestImgSide =
+                            min(imgSize.width, imgSize.height).toDouble();
+                        setState(() {
+                          _pickedImageCropped = croppedImage;
+                          _pickedImageSize = shortestImgSide;
+                        });
+                      }
+                    }
+                  } on PlatformException catch (e) {
+                    print(e);
+                  } catch (e) {
+                    print(e);
+                  }
+                },
+                child: Text("Pick image")),
+          ]),
           ElevatedButton(
               onPressed: () {
                 setState(() {
@@ -184,9 +359,23 @@ class _NewGameScreenState extends State<NewGameScreen>
                 });
               },
               child: Text("RESET")),
+          if (_solving)
+            OutlinedButton(
+                onPressed: () {
+                  setState(() {
+                    _solving = false;
+                  });
+                },
+                child: Text("CANCEL"))
+          else
+            ElevatedButton(
+                onPressed: () {
+                  _solve();
+                },
+                child: Text("SOLVE")),
           Expanded(
             child: AnimatedBuilder(
-                animation: _tileEnterAnimation,
+                animation: _animationController!,
                 builder: (context, child) {
                   return PuzzleBoardWidget(
                     mousePosition: _mousePosition,
@@ -195,20 +384,30 @@ class _NewGameScreenState extends State<NewGameScreen>
                     xPercent: 0,
                     yPercent: -0.35,
                     puzzle: _puzzle,
-                    images: _images,
+                    imageProvider: _pickedImageCropped == null
+                        ? const AssetImage("assets/img/moon.png")
+                            as ImageProvider
+                        : MemoryImage(_pickedImageCropped!),
+                    imgSize:
+                        _pickedImageSize == null ? 1668.0 : _pickedImageSize!,
                     tileEnterAnimation: _tileEnterAnimation,
                     flipAnimation: _flipAnimation,
+                    tileLetterFadeAnimation: _letterFadeAnimation,
+                    tileLetterDepthAnimation: _letterDepthAnimation,
                   );
                 }),
           ),
           ElevatedButton(
               onPressed: () {
-                if (_animationController.isCompleted) {
+                _initPuzzle();
+                setState(() {});
+
+                if (_animationController!.isCompleted) {
                   setState(() {
-                    _animationController.reset();
+                    _animationController!.reset();
                   });
                 } else {
-                  _animationController.forward();
+                  _animationController!.forward();
                 }
               },
               child: Text("Animate")),

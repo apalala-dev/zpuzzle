@@ -34,8 +34,9 @@ import 'package:slide_puzzle/model/tile.dart';
 /// Model for a puzzle.
 /// {@endtemplate}
 class Puzzle extends Equatable {
-  /// {@macro puzzle}
-  Puzzle({required this.tiles}) {
+  /// {@macro puzzle}f
+  Puzzle({required this.tiles, List<Position>? history})
+      : history = history ?? [] {
     _nbMovesSink = _nbMovesSteamController.sink;
   }
 
@@ -118,6 +119,8 @@ class Puzzle extends Equatable {
   /// List of [Tile]s representing the puzzle's current arrangement.
   final List<Tile> tiles;
 
+  List<Position> history = [];
+
   int _nbMoves = 0;
   final StreamController<int> _nbMovesSteamController = StreamController<int>();
 
@@ -125,7 +128,7 @@ class Puzzle extends Equatable {
   late Sink<int> _nbMovesSink;
 
   Puzzle clone() {
-    return Puzzle(tiles: [...tiles]);
+    return Puzzle(tiles: [...tiles], history: [...history]);
   }
 
   /// Get the dimension of a puzzle given its tile arrangement.
@@ -262,6 +265,8 @@ class Puzzle extends Equatable {
   // list to _swapTiles to individually swap them.
   Puzzle moveTiles(Tile tile, List<Tile> tilesToSwap) {
     if (tilesToSwap.isEmpty) {
+      // history.add(tile.currentPosition);
+      // history.add(getWhitespaceTile().currentPosition);
       _nbMovesSink.add(++_nbMoves);
     }
     final whitespaceTile = getWhitespaceTile();
@@ -280,7 +285,9 @@ class Puzzle extends Equatable {
       return moveTiles(tileToSwapWith, tilesToSwap);
     } else {
       tilesToSwap.add(tile);
-      return _swapTiles(tilesToSwap);
+      var result =  _swapTiles(tilesToSwap);
+      history.add(getWhitespaceTile().currentPosition);
+      return result;
     }
   }
 
@@ -302,7 +309,7 @@ class Puzzle extends Equatable {
       );
     }
 
-    return Puzzle(tiles: tiles);
+    return Puzzle(tiles: tiles, history: history);
   }
 
   /// Sorts puzzle tiles so they are in order of their current position.
@@ -311,7 +318,7 @@ class Puzzle extends Equatable {
       ..sort((tileA, tileB) {
         return tileA.currentPosition.compareTo(tileB.currentPosition);
       });
-    return Puzzle(tiles: sortedTiles);
+    return Puzzle(tiles: sortedTiles, history: history);
   }
 
   List<Tile>? shortestPathBetween(
