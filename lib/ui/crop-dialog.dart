@@ -45,6 +45,7 @@ class _CropDialogState extends State<CropDialog> {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+    // Try to not resize gifs, resizing gifs in flutter is broken : https://github.com/flutter/plugins/pull/2821
     return Column(children: [
       SizedBox(
           width: size.width * 0.7,

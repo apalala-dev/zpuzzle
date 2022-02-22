@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_color/flutter_color.dart';
 import 'package:flutter_color/src/helper.dart';
+import 'package:rive/rive.dart';
 import 'package:slide_puzzle/z-widget.dart';
 import 'package:slide_puzzle/ztext.dart';
 import 'package:supercharged/supercharged.dart';
 
-class PuzzleTileWidget extends StatefulWidget {
+class PuzzleTileAnyWidget extends StatefulWidget {
   final Rect canvasRect;
   final int index;
   final VoidCallback onTap;
@@ -18,8 +19,9 @@ class PuzzleTileWidget extends StatefulWidget {
   final double percentOpacity;
   final int nbTiles;
   final double imgSize;
+  final Widget child;
 
-  const PuzzleTileWidget(
+  const PuzzleTileAnyWidget(
     this.index, {
     Key? key,
     required this.canvasRect,
@@ -33,6 +35,7 @@ class PuzzleTileWidget extends StatefulWidget {
     required this.imgSize,
     this.percentDepth = 1,
     this.percentOpacity = 1,
+    required this.child,
   }) : super(key: key);
 
   @override
@@ -41,7 +44,7 @@ class PuzzleTileWidget extends StatefulWidget {
   }
 }
 
-class _PuzzleTileWidgetState extends State<PuzzleTileWidget> {
+class _PuzzleTileWidgetState extends State<PuzzleTileAnyWidget> {
   @override
   Widget build(BuildContext context) {
     Widget text = Text(
@@ -78,32 +81,31 @@ class _PuzzleTileWidgetState extends State<PuzzleTileWidget> {
       );
     }
 
-    // text = widget.image ?? text;
-
-    // var imgSize = 1668.0;
-    var scaledDownSize =
-        3 * widget.tileSize * MediaQuery.of(context).devicePixelRatio;
-
-    // print(
-    //     "($scaledDownSize * ($imgSize / 3)) / $imgSize = ${(scaledDownSize * (imgSize / 3)) / imgSize}");
-
     var nbTiles = widget.nbTiles;
     FractionalOffset fracOff = FractionalOffset(
         ((widget.index - 1) % nbTiles) * (1 / (nbTiles - 1)),
         ((widget.index - 1) ~/ nbTiles) * (1 / (nbTiles - 1)));
 
-    // const AssetImage("assets/img/moon.png")
-    text = Container(
+    text = SizedBox(
       width: widget.tileSize,
       height: widget.tileSize,
-      child: Center(child: text),
-      decoration: BoxDecoration(
-          image: DecorationImage(
-              image: widget.imageProvider,
-              fit: BoxFit.none,
-              scale: widget.imgSize / (nbTiles * widget.tileSize),
-              // scaledDownSize / ((scaledDownSize * (imgSize / 3)) / imgSize),
-              alignment: fracOff)),
+      child: Stack(children: [
+        Positioned.fill(
+          child: ClipRect(
+            child: OverflowBox(
+              maxWidth: double.infinity,
+              maxHeight: double.infinity,
+              alignment: fracOff,
+              child: SizedBox(
+                child: widget.child,
+                height: nbTiles * widget.tileSize,
+                width: nbTiles * widget.tileSize,
+              ),
+            ),
+          ),
+        ),
+        Center(child: text),
+      ]),
     );
 
     return Padding(
@@ -123,26 +125,6 @@ class _PuzzleTileWidgetState extends State<PuzzleTileWidget> {
             child: Center(
               child: text,
             )),
-        onTap: widget.onTap,
-      ),
-      padding: EdgeInsets.all(widget.tileSpacing),
-    );
-
-    return Padding(
-      child: InkWell(
-        child: Container(
-          child: Center(
-            child: text,
-          ),
-          decoration: BoxDecoration(
-              color: Colors.teal,
-              borderRadius: BorderRadius.circular(8),
-              boxShadow: [
-                BoxShadow(
-                    color: Colors.teal.darker(30),
-                    offset: Offset(widget.xTilt * 2, widget.yTilt * 2))
-              ]),
-        ),
         onTap: widget.onTap,
       ),
       padding: EdgeInsets.all(widget.tileSpacing),

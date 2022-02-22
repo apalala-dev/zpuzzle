@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_color/flutter_color.dart';
 import 'package:flutter_color/src/helper.dart';
+import 'package:rive/rive.dart';
 import 'package:slide_puzzle/z-widget.dart';
 import 'package:slide_puzzle/ztext.dart';
 import 'package:supercharged/supercharged.dart';
 
-class PuzzleTileWidget extends StatefulWidget {
+class PuzzleRiveTileWidget extends StatefulWidget {
   final Rect canvasRect;
   final int index;
   final VoidCallback onTap;
@@ -18,8 +19,9 @@ class PuzzleTileWidget extends StatefulWidget {
   final double percentOpacity;
   final int nbTiles;
   final double imgSize;
+  final RiveAnimationController riveAnimationController;
 
-  const PuzzleTileWidget(
+  const PuzzleRiveTileWidget(
     this.index, {
     Key? key,
     required this.canvasRect,
@@ -33,6 +35,7 @@ class PuzzleTileWidget extends StatefulWidget {
     required this.imgSize,
     this.percentDepth = 1,
     this.percentOpacity = 1,
+    required this.riveAnimationController,
   }) : super(key: key);
 
   @override
@@ -41,7 +44,7 @@ class PuzzleTileWidget extends StatefulWidget {
   }
 }
 
-class _PuzzleTileWidgetState extends State<PuzzleTileWidget> {
+class _PuzzleTileWidgetState extends State<PuzzleRiveTileWidget> {
   @override
   Widget build(BuildContext context) {
     Widget text = Text(
@@ -92,18 +95,67 @@ class _PuzzleTileWidgetState extends State<PuzzleTileWidget> {
         ((widget.index - 1) % nbTiles) * (1 / (nbTiles - 1)),
         ((widget.index - 1) ~/ nbTiles) * (1 / (nbTiles - 1)));
 
+    // fracOff = FractionalOffset(
+    //   (1 - 1) / (3 - 1),
+    //   (1 - 1) / (3 - 1),
+    // );
+
     // const AssetImage("assets/img/moon.png")
-    text = Container(
+    Matrix4 mat4 = Matrix4.identity()..translate(widget.tileSize);
+    final transformationController = TransformationController()..value = mat4;
+    text = SizedBox(
       width: widget.tileSize,
       height: widget.tileSize,
-      child: Center(child: text),
-      decoration: BoxDecoration(
-          image: DecorationImage(
-              image: widget.imageProvider,
-              fit: BoxFit.none,
-              scale: widget.imgSize / (nbTiles * widget.tileSize),
-              // scaledDownSize / ((scaledDownSize * (imgSize / 3)) / imgSize),
-              alignment: fracOff)),
+      child: Stack(children: [
+        Positioned.fill(
+          // child: InteractiveViewer(
+          //   transformationController: transformationController,
+          child: ClipRect(
+            child: OverflowBox(
+              maxWidth: double.infinity,
+              maxHeight: double.infinity,
+              alignment: fracOff,
+              child: SizedBox(
+                child: RiveAnimation.asset(
+                  'assets/rive/earth.riv',
+                  fit: BoxFit.cover,
+                  controllers: [widget.riveAnimationController],
+                ),
+                height: nbTiles * widget.tileSize,
+                width: nbTiles * widget.tileSize,
+                // ),
+              ),
+            ),
+          ),
+        ),
+        // Positioned.fill(
+        //     child: OverflowBox(
+        //         alignment: fracOff,
+        //         child: UnconstrainedBox(child:SizedBox(
+        //           child: const RiveAnimation.asset(
+        //             'assets/rive/earth.riv',
+        //             fit: BoxFit.scaleDown,
+        //           ),
+        //           height: nbTiles * widget.tileSize,
+        //           width: nbTiles * widget.tileSize,
+        //         )))),
+        // Positioned.fill(
+        //   child: ClipRect(
+        //       child: Align(
+        //           child: UnconstrainedBox(
+        //             child: SizedBox(
+        //               child: const RiveAnimation.asset(
+        //                 'assets/rive/earth.riv',
+        //                 fit: BoxFit.scaleDown,
+        //               ),
+        //               height: nbTiles * widget.tileSize,
+        //               width: nbTiles * widget.tileSize,
+        //             ),
+        //           ),
+        //           alignment: fracOff)),
+        // ),
+        Center(child: text),
+      ]),
     );
 
     return Padding(

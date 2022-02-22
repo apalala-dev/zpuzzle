@@ -2,10 +2,14 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_color/flutter_color.dart';
+import 'package:rive/rive.dart';
 import 'package:slide_puzzle/model/position.dart';
 import 'package:slide_puzzle/model/puzzle.dart';
 import 'package:slide_puzzle/model/tile.dart';
+import 'package:slide_puzzle/puzzle-rive-tile-widget.dart';
+import 'package:slide_puzzle/puzzle-tile-any-widget.dart';
 import 'package:slide_puzzle/puzzle-tile-widget.dart';
+import 'package:slide_puzzle/rive/speed_controller.dart';
 import 'package:slide_puzzle/z-widget.dart';
 import 'package:supercharged/supercharged.dart';
 import 'package:image/image.dart' as imglib;
@@ -21,6 +25,8 @@ class PuzzleBoardWidget extends StatefulWidget {
   final List<Animation<double>> tileLetterDepthAnimation;
   final List<Animation<double>> tileLetterFadeAnimation;
   final Animation<double> flipAnimation;
+  final bool exiting;
+  final Widget? backgroundWidget;
 
   const PuzzleBoardWidget({
     Key? key,
@@ -34,6 +40,8 @@ class PuzzleBoardWidget extends StatefulWidget {
     required this.imgSize,
     this.xPercent,
     this.yPercent,
+    required this.exiting,
+    this.backgroundWidget,
   }) : super(key: key);
 
   @override
@@ -43,15 +51,27 @@ class PuzzleBoardWidget extends StatefulWidget {
 }
 
 class _PuzzleBoardWidgetState extends State<PuzzleBoardWidget> {
+  late RiveAnimationController riveController;
+
+  @override
+  void initState() {
+    super.initState();
+    riveController =
+        SpeedController('Animation 1', speedMultiplier: 1 / 10, autoplay: true);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
     return LayoutBuilder(builder: (ctx, constraints) {
+      // print("layout huilder build");
       var size = Size(constraints.maxWidth, constraints.maxHeight);
+      print("cur size: $size");
 
       // var size = Size(200,200);
       var canvasRect = Offset.zero & size;
-      const boardSpacing = 40.0; //20.0;
-      const innerBoardSpacing = 16.0; //8.0;
+      final boardSpacing = size.shortestSide / 100; //20.0;
+      final innerBoardSpacing = size.shortestSide / 30; //8.0;
 
       Widget boardTiles;
 
@@ -63,7 +83,7 @@ class _PuzzleBoardWidgetState extends State<PuzzleBoardWidget> {
               innerBoardSpacing * 2 * 2 -
               58) /
           nbColumns);
-      squareSize = 70;
+      // squareSize = 70;
 
       var xTilt = widget.xPercent ??
           -0.02 *
@@ -85,50 +105,69 @@ class _PuzzleBoardWidgetState extends State<PuzzleBoardWidget> {
         child: Stack(children: [
           ...List.generate(nbColumns * nbColumns, (idx) {
             var tile = widget.puzzle.tiles[idx];
-            var scaledTile = Tween(begin: 0.1, end: 1)
+            var scaledTile = Tween(
+                    begin: widget.exiting ? 1.0 : 0.1,
+                    end: widget.exiting ? 0.0 : 1.0)
                 .evaluate(widget.tileEnterAnimation[tile.value - 1]);
-            var yOffset = -Tween(begin: -size.shortestSide, end: 0.0)
+            var yOffset = -Tween(
+                    begin: widget.exiting ? 0.0 : -screenSize.longestSide,
+                    end: widget.exiting ? -screenSize.longestSide : 0.0)
                 .evaluate(widget.tileEnterAnimation[tile.value - 1]);
-            var zOffset = Tween(begin: -size.shortestSide, end: 0.0)
+            var zOffset = Tween(
+                    begin: widget.exiting ? 0.0 : -screenSize.longestSide,
+                    end: widget.exiting ? -screenSize.longestSide : 0.0)
                 .evaluate(widget.tileEnterAnimation[tile.value - 1]);
             var percentDepthText =
                 widget.tileLetterDepthAnimation[tile.value - 1].value;
             var percentOpacityText =
                 widget.tileLetterFadeAnimation[tile.value - 1].value;
+            // if (idx == 0) {
+            //   print("exiting: ${widget.exiting}, scale: $scaledTile, yOffset: $yOffset");
+            // }
             var content = SizedBox(
                 child: idx == nbColumns * nbColumns - 1
                     ? null
                     : Transform(
                         transform: Matrix4.identity()
                           ..translate(
-                            0,
+                            0.0,
                             yOffset,
                             zOffset,
                           )
                           ..scale(scaledTile),
-                        child: PuzzleTileWidget(
-                          tile.value,
-                          xTilt: xTilt,
-                          yTilt: yTilt,
-                          canvasRect: canvasRect,
-                          tileSize: squareSize,
-                          tileSpacing: tileSpacing,
-                          imageProvider: widget.imageProvider,
-                          imgSize: widget.imgSize,
-                          percentDepth: percentDepthText,
-                          percentOpacity: percentOpacityText,
-                          nbTiles: widget.puzzle.getDimension(),
-                          onTap: () {
-                            // print("Gonna move tile $tile");
-                            if (widget.puzzle.isTileMovable(tile)) {
-                              // print("movable tile $tile");
-                              setState(() {
-                                widget.puzzle.moveTiles(tile, []);
-                                // print("tile moved $tile");
-                              });
-                            }
-                          },
-                        )),
+                        child: ClipRRect(
+                            borderRadius:
+                                BorderRadius.circular(size.shortestSide / 50),
+                            child: PuzzleTileAnyWidget(
+                              tile.value,
+                              xTilt: xTilt,
+                              yTilt: yTilt,
+                              canvasRect: canvasRect,
+                              tileSize: squareSize,
+                              tileSpacing: tileSpacing,
+                              imageProvider: widget.imageProvider,
+                              imgSize: widget.imgSize,
+                              percentDepth: percentDepthText,
+                              percentOpacity: percentOpacityText,
+                              nbTiles: widget.puzzle.getDimension(),
+                              child: widget.backgroundWidget ??
+                                  RiveAnimation.asset(
+                                    'assets/rive/earth.riv',
+                                    fit: BoxFit.cover,
+                                    controllers: [riveController],
+                                  ),
+                              onTap: () {
+                                // print("Gonna move tile $tile");
+                                if (widget.puzzle.isTileMovable(tile)) {
+                                  // print("movable tile $tile");
+                                  setState(() {
+                                    widget.puzzle.moveTiles(tile, []);
+                                    // print("tile moved $tile");
+                                  });
+                                }
+                              },
+                            )),
+                      ),
                 width: squareSize,
                 height: squareSize);
             return AnimatedPositioned(
@@ -146,17 +185,15 @@ class _PuzzleBoardWidgetState extends State<PuzzleBoardWidget> {
 
       var newContent = ZWidget(
           debug: false,
-          yPercent: xTilt,
-          xPercent: yTilt,
+          rotationY: xTilt,
+          rotationX: yTilt,
           depth: 0.05 * size.shortestSide,
-          perspective: 20,
           direction: ZDirection.backwards,
           layers: 10,
-          eventRotation: 20,
           aboveChild: Container(
             width: squareSize * nbColumns + tileSpacing * (nbColumns - 1),
             height: squareSize * nbColumns + tileSpacing * (nbColumns - 1),
-            padding: const EdgeInsets.all(innerBoardSpacing),
+            padding: EdgeInsets.all(innerBoardSpacing),
             decoration: BoxDecoration(
               color: Colors.green,
               borderRadius: BorderRadius.circular(16),
@@ -169,7 +206,7 @@ class _PuzzleBoardWidgetState extends State<PuzzleBoardWidget> {
             height: innerBoardSpacing * 4 +
                 squareSize * nbColumns +
                 tileSpacing * (nbColumns - 1),
-            padding: const EdgeInsets.all(innerBoardSpacing),
+            padding: EdgeInsets.all(innerBoardSpacing),
             decoration: BoxDecoration(
               color: HexColor("D0D0D0"),
               borderRadius: BorderRadius.circular(16),
@@ -178,10 +215,10 @@ class _PuzzleBoardWidgetState extends State<PuzzleBoardWidget> {
           child: Container(
             child: Container(
               child: boardTiles,
-              padding: const EdgeInsets.all(innerBoardSpacing),
+              padding: EdgeInsets.all(innerBoardSpacing),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(innerBoardSpacing),
                 boxShadow: [
                   BoxShadow(
                       color: Colors.black54,
@@ -190,7 +227,7 @@ class _PuzzleBoardWidgetState extends State<PuzzleBoardWidget> {
                 ],
               ),
             ),
-            padding: const EdgeInsets.all(innerBoardSpacing),
+            padding: EdgeInsets.all(innerBoardSpacing),
             decoration: BoxDecoration(
                 color: HexColor("E0E0E0"),
                 // boxShadow: [
@@ -208,12 +245,12 @@ class _PuzzleBoardWidgetState extends State<PuzzleBoardWidget> {
                 //                       canvasRect.center.dy
                 //                   : 0)))
                 // ],
-                borderRadius: BorderRadius.circular(16)),
+                borderRadius: BorderRadius.circular(size.shortestSide / 30)),
           ));
 
       return Center(
           child: Padding(
-              padding: const EdgeInsets.all(boardSpacing), child: newContent));
+              padding: EdgeInsets.all(boardSpacing), child: newContent));
     });
   }
 }

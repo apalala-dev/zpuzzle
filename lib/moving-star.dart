@@ -8,19 +8,21 @@ class MovingStar {
   Offset dest;
   int timeToFinish; // in ms
   int timeAltreadySpent;
-  final double size;
-  final Color color;
+  double startingSize;
+  double endingSize;
+  Color color;
   int distance;
 
-  MovingStar({
-    required this.basePosition,
-    required this.dest,
-    required this.size,
-    required this.color,
-    required this.timeToFinish,
-    this.timeAltreadySpent = 0,
-    required this.distance,
-  });
+  MovingStar(
+      {required this.basePosition,
+      required this.dest,
+      required this.startingSize,
+      required this.color,
+      required this.timeToFinish,
+      this.timeAltreadySpent = 0,
+      required this.distance,
+      double? endingSize})
+      : endingSize = endingSize ?? startingSize;
 
   /// based on https://math.stackexchange.com/a/1630886
   Offset calculatedPosition(int timeSpent,
@@ -103,6 +105,16 @@ class MovingStar {
     return Offset(newX, newY);
   }
 
+  static Offset offsetInCenter(
+    Rect canvasRect,
+    double distance,
+  ) {
+    var rand = Random();
+    return Offset(
+        canvasRect.center.dx - distance / 2 + rand.nextDouble() * distance,
+        canvasRect.center.dy - distance / 2 + rand.nextDouble() * distance);
+  }
+
   void recreateElsewhere(
       Rect canvasRect, int distance, int alreadySpent, int newTimeToFinish) {
     basePosition = MovingStar.offsetOutside(canvasRect, 200);
@@ -112,5 +124,14 @@ class MovingStar {
     dest = MovingStar.offsetOutside(canvasRect, 200,
         xBase: basePosition.dx, yBase: basePosition.dy);
     // }while(!willIntersect(canvasRect, alreadySpent));
+  }
+
+  double size(int timeSpent) {
+    return timeSpent / timeToFinish * endingSize;
+  }
+
+  Color calculatedColor(int timeSpent) {
+    return ColorTween(begin: color, end: Colors.white)
+        .lerp(timeSpent / timeToFinish)!;
   }
 }

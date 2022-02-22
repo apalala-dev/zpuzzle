@@ -43,7 +43,7 @@ class _GameScreenState extends State<GameScreen> {
       var canvasRect = Offset.zero & size;
 
       gyroscopeEvents.listen((GyroscopeEvent event) {
-        print("gyro: ${event.x}, ${event.y}, ${event.z}");
+        // print("gyro: ${event.x}, ${event.y}, ${event.z}");
         _mousePosition = Offset(event.x * 100, event.y * 100);
       });
       // _loadImage();
@@ -131,6 +131,7 @@ class _GameScreenState extends State<GameScreen> {
             puzzle: _puzzle,
             imageProvider: const AssetImage("assets/img/moon.png"),
             imgSize: 1668,
+                exiting: false,
           )),
           Expanded(
               child: Column(

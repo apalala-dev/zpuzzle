@@ -19,6 +19,7 @@ zMatrix4() {
   // This way, we could apply this matrix4 to anything: a widget, a canvas or a path (other things might apply)
 }
 
+// TODO The Opacity widget is bad for performances and is buggy (it makes things appear at a different place on android than on web)
 class ZWidget extends StatelessWidget {
   final Widget child;
   final Widget? belowChild;
@@ -26,36 +27,36 @@ class ZWidget extends StatelessWidget {
   final double depth;
   final ZDirection direction;
 
-  // event: "none",
-  final double eventRotation;
-  final double xPercent;
-  final double yPercent;
+  final double rotationX;
+  final double rotationY;
 
   // final ZDirection eventDirection;
   final bool fade;
   final int layers;
-  final int perspective;
   final bool z;
   final bool reverse;
   final bool debug;
 
-  const ZWidget({
-    required this.child,
-    this.belowChild,
-    this.aboveChild,
-    Key? key,
-    this.depth = 1,
-    this.direction = ZDirection.both,
-    this.eventRotation = 0,
-    this.xPercent = 0,
-    this.yPercent = 0,
-    this.fade = false,
-    this.layers = 4,
-    this.perspective = 20,
-    this.z = true,
-    this.reverse = false,
-    this.debug = false,
-  }) : super(key: key);
+  final int perspective;
+  final Alignment? alignment;
+
+  const ZWidget(
+      {required this.child,
+      this.belowChild,
+      this.aboveChild,
+      Key? key,
+      this.depth = 1,
+      this.direction = ZDirection.both,
+      this.rotationX = 0,
+      this.rotationY = 0,
+      this.fade = false,
+      this.layers = 4,
+      this.z = true,
+      this.reverse = false,
+      this.debug = false,
+      this.alignment,
+      this.perspective = 5})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -70,13 +71,13 @@ class ZWidget extends StatelessWidget {
                 nbLayers: layers,
                 direction: direction,
                 depth: depth,
-                perspective: perspective,
                 fade: fade,
-                rotation: eventRotation,
-                xPercent: xPercent,
-                yPercent: yPercent,
+                xPercent: rotationX,
+                yPercent: rotationY,
                 reverse: false,
                 debug: debug,
+                alignment: alignment,
+                perspective: perspective,
               )),
     );
   }
@@ -90,14 +91,14 @@ class _ZWidgetLayer extends StatelessWidget {
   final int layer;
   final int nbLayers;
   final double depth;
-  final int perspective;
   final ZDirection direction;
   final bool reverse;
   final bool fade;
   final double xPercent;
   final double yPercent;
-  final double rotation;
   final bool debug;
+  final Alignment? alignment;
+  final int perspective;
 
   const _ZWidgetLayer(
     this.child, {
@@ -108,12 +109,12 @@ class _ZWidgetLayer extends StatelessWidget {
     required this.direction,
     required this.reverse,
     required this.depth,
-    required this.perspective,
     required this.fade,
     required this.xPercent,
     required this.yPercent,
-    required this.rotation,
     this.debug = false,
+    required this.alignment,
+    required this.perspective,
   });
 
   @override
@@ -124,40 +125,42 @@ class _ZWidgetLayer extends StatelessWidget {
 
     Widget layerChild;
     double zTranslation;
-    int idxToHighlight;
     switch (direction) {
       case ZDirection.both:
         zTranslation = -(percent * depth) + depth / 2;
-        idxToHighlight = nbLayers - 1;
-        layerChild = layer == nbLayers - 1
+        final midLayer = (nbLayers / 2).round();
+        layerChild = layer == midLayer
             ? child
-            : layer < nbLayers / 2
+            : layer < midLayer
                 ? belowChild
                 : aboveChild;
+        // layerChild = layer == nbLayers - 1
+        //     ? child
+        //     : layer < nbLayers / 2
+        //         ? belowChild
+        //         : aboveChild;
         break;
       case ZDirection.backwards:
         zTranslation = -(percent * depth) + depth;
-        idxToHighlight = 0;
         layerChild = layer == nbLayers - 1 ? child : belowChild;
         break;
       case ZDirection.forwards:
         zTranslation = -percent * depth;
-        idxToHighlight = nbLayers - 1;
-        layerChild = layer == nbLayers - 1 ? child : aboveChild;
+        layerChild = layer == 0 ? child : aboveChild;
         break;
     }
 
     // Switch neg/pos values if eventDirection is reversed
     double eventDirectionAdj;
     if (reverse) {
-      eventDirectionAdj = -0.1;
+      eventDirectionAdj = -1;
     } else {
-      eventDirectionAdj = 0.1;
+      eventDirectionAdj = 1;
     }
 
     // Multiply percent rotation by eventRotation and eventDirection
-    var xTilt = xPercent * rotation * eventDirectionAdj;
-    var yTilt = -yPercent * rotation * eventDirectionAdj;
+    var xTilt = xPercent * eventDirectionAdj;
+    var yTilt = -yPercent * eventDirectionAdj;
 
     // Keep values in bounds [-1, 1] // TODO Not used in ztext.js
     // var xClamped = min(max(xTilt, -1), 1);
@@ -170,10 +173,31 @@ class _ZWidgetLayer extends StatelessWidget {
     //     child:
 
     // print("tilt: $xTilt, $yTilt");
-    if (debug) {
-      print("xTilt: ${xTilt/pi}, yTilt: $yTilt, zTranslation: $zTranslation");
-    }
+    // if (debug) {
+    //   print(
+    //       "layer $layer/$nbLayers xTilt: ${xTilt / pi}, yTilt: $yTilt, zTranslation: $zTranslation");
+    // }
 
+    if (!fade) {
+      final content = Transform(
+        transform: Matrix4.identity()
+          ..setEntry(3, 2, 0.001 * perspective)
+          ..rotateX(xTilt)
+          ..rotateY(yTilt)
+          ..translate(0.0, 0.0, zTranslation),
+        child: layerChild,
+        alignment: alignment ?? FractionalOffset.center,
+      );
+      if (debug) {
+        return Container(
+          child: content,
+          decoration:
+              BoxDecoration(border: Border.all(width: 2, color: Colors.pink)),
+        );
+      } else {
+        return content;
+      }
+    }
 
     return Opacity(
       child: Transform(
@@ -181,7 +205,7 @@ class _ZWidgetLayer extends StatelessWidget {
           ..setEntry(3, 2, 0.001)
           ..rotateX(xTilt)
           ..rotateY(yTilt)
-          ..translate(0, 0, zTranslation),
+          ..translate(0.0, 0.0, zTranslation),
         child: layerChild,
         alignment: FractionalOffset.center,
       ),
