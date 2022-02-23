@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:slide_puzzle/z-widget.dart';
+import 'package:zwidget/zwidget.dart';
 
 class TestScreen extends StatefulWidget {
   @override

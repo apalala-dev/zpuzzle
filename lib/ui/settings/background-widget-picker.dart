@@ -13,7 +13,7 @@ import 'package:mime/mime.dart';
 import 'package:rive/rive.dart';
 import 'package:simple_animations/simple_animations.dart';
 import 'package:slide_puzzle/rive/rive-animation-bytes.dart';
-import 'package:slide_puzzle/ui/crop-dialog.dart';
+import 'package:slide_puzzle/ui/settings/crop-dialog.dart';
 import 'package:supercharged_dart/supercharged_dart.dart';
 import 'package:image_size_getter/image_size_getter.dart' as imgSizeGetter;
 

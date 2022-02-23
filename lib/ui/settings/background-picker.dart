@@ -5,7 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:simple_animations/simple_animations.dart';
-import 'package:slide_puzzle/ui/crop-dialog.dart';
+import 'package:slide_puzzle/ui/settings/crop-dialog.dart';
 import 'package:supercharged_dart/supercharged_dart.dart';
 import 'package:image_size_getter/image_size_getter.dart' as imgSizeGetter;
 

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:slide_puzzle/game-screen.dart';
 import 'package:slide_puzzle/home-screen.dart';
-import 'package:slide_puzzle/moving-star.dart';
+import 'package:slide_puzzle/ui/background/moving-star.dart';
 import 'package:slide_puzzle/new-game-screen.dart';
-import 'package:slide_puzzle/space-widget.dart';
+import 'package:slide_puzzle/ui/background/space-widget.dart';
 import 'package:slide_puzzle/test-screen.dart';
 
 void main() {

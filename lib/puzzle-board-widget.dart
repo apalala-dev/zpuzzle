@@ -1,20 +1,14 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_color/flutter_color.dart';
 import 'package:rive/rive.dart';
-import 'package:slide_puzzle/model/position.dart';
 import 'package:slide_puzzle/model/puzzle.dart';
-import 'package:slide_puzzle/model/tile.dart';
-import 'package:slide_puzzle/puzzle-rive-tile-widget.dart';
-import 'package:slide_puzzle/puzzle-tile-any-widget.dart';
-import 'package:slide_puzzle/puzzle-tile-widget.dart';
 import 'package:slide_puzzle/rive/speed_controller.dart';
-import 'package:slide_puzzle/z-widget.dart';
 import 'package:supercharged/supercharged.dart';
-import 'package:image/image.dart' as imglib;
+import 'package:zwidget/zwidget.dart';
 
-class PuzzleBoardWidget extends StatefulWidget {
+import 'ui/tiles/puzzle-tile-any-widget.dart';
+
+class OldPuzzleBoardWidget extends StatefulWidget {
   final Puzzle puzzle;
   final Offset? mousePosition;
   final ImageProvider imageProvider;
@@ -28,7 +22,7 @@ class PuzzleBoardWidget extends StatefulWidget {
   final bool exiting;
   final Widget? backgroundWidget;
 
-  const PuzzleBoardWidget({
+  const OldPuzzleBoardWidget({
     Key? key,
     required this.mousePosition,
     required this.puzzle,
@@ -50,7 +44,7 @@ class PuzzleBoardWidget extends StatefulWidget {
   }
 }
 
-class _PuzzleBoardWidgetState extends State<PuzzleBoardWidget> {
+class _PuzzleBoardWidgetState extends State<OldPuzzleBoardWidget> {
   late RiveAnimationController riveController;
 
   @override
@@ -150,6 +144,8 @@ class _PuzzleBoardWidgetState extends State<PuzzleBoardWidget> {
                               percentDepth: percentDepthText,
                               percentOpacity: percentOpacityText,
                               nbTiles: widget.puzzle.getDimension(),
+                              borderRadius:
+                                  BorderRadius.circular(size.shortestSide / 30),
                               child: widget.backgroundWidget ??
                                   RiveAnimation.asset(
                                     'assets/rive/earth.riv',
@@ -187,6 +183,7 @@ class _PuzzleBoardWidgetState extends State<PuzzleBoardWidget> {
           debug: false,
           rotationY: xTilt,
           rotationX: yTilt,
+          alignment: Alignment.bottomCenter,
           depth: 0.05 * size.shortestSide,
           direction: ZDirection.backwards,
           layers: 10,

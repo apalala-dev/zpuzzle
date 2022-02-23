@@ -12,12 +12,12 @@ import 'package:slide_puzzle/model/puzzle.dart';
 import 'package:slide_puzzle/puzzle-board-widget.dart';
 import 'package:image/image.dart' as imglib;
 import 'package:sensors_plus/sensors_plus.dart';
-import 'package:slide_puzzle/space-widget.dart';
-import 'package:slide_puzzle/space-widget2.dart';
-import 'package:slide_puzzle/ui/background-picker.dart';
-import 'package:slide_puzzle/ui/background-widget-picker.dart';
-import 'package:slide_puzzle/ui/crop-dialog.dart';
-import 'package:slide_puzzle/ui/size-picker.dart';
+import 'package:slide_puzzle/ui/background/space-widget.dart';
+import 'package:slide_puzzle/ui/background/space-widget2.dart';
+import 'package:slide_puzzle/ui/settings/background-picker.dart';
+import 'package:slide_puzzle/ui/settings/background-widget-picker.dart';
+import 'package:slide_puzzle/ui/settings/crop-dialog.dart';
+import 'package:slide_puzzle/ui/settings/size-picker.dart';
 import 'package:supercharged_dart/supercharged_dart.dart';
 
 class NewGameScreen extends StatefulWidget {
@@ -170,7 +170,7 @@ class _NewGameScreenState extends State<NewGameScreen>
               child: AnimatedBuilder(
                   animation: _animationController!,
                   builder: (context, child) {
-                    return PuzzleBoardWidget(
+                    return OldPuzzleBoardWidget(
                       mousePosition: _mousePosition,
                       // Offset(canvasRect.center.dx,
                       //     canvasRect.center.dy),

@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_color/flutter_color.dart';
 import 'package:flutter_color/src/helper.dart';
-import 'package:rive/rive.dart';
-import 'package:slide_puzzle/z-widget.dart';
-import 'package:slide_puzzle/ztext.dart';
-import 'package:supercharged/supercharged.dart';
+import 'package:zwidget/zwidget.dart';
 
 class PuzzleTileAnyWidget extends StatefulWidget {
   final Rect canvasRect;
@@ -12,14 +9,15 @@ class PuzzleTileAnyWidget extends StatefulWidget {
   final VoidCallback onTap;
   final double tileSize;
   final double tileSpacing;
-  final ImageProvider imageProvider;
   final double xTilt;
   final double yTilt;
   final double percentDepth;
   final double percentOpacity;
   final int nbTiles;
-  final double imgSize;
+  final ImageProvider? imageProvider;
+  final double? imgSize;
   final Widget child;
+  final BorderRadius borderRadius;
 
   const PuzzleTileAnyWidget(
     this.index, {
@@ -31,11 +29,12 @@ class PuzzleTileAnyWidget extends StatefulWidget {
     required this.xTilt,
     required this.yTilt,
     required this.nbTiles,
-    required this.imageProvider,
-    required this.imgSize,
+    this.imageProvider,
+    this.imgSize,
     this.percentDepth = 1,
     this.percentOpacity = 1,
     required this.child,
+    required this.borderRadius,
   }) : super(key: key);
 
   @override
@@ -60,22 +59,22 @@ class _PuzzleTileWidgetState extends State<PuzzleTileAnyWidget> {
     if (widget.percentDepth > 0) {
       text = ZWidget(
         child: Text("${widget.index}",
-            style:
-                TextStyle(fontSize: widget.tileSize / 2, color: Colors.white)),
-        aboveChild: Text("${widget.index}",
             style: TextStyle(
-                fontSize: widget.tileSize / 2, color: HexColor("999999"))),
+                fontSize: widget.tileSize / 1.5, color: Colors.white)),
+        belowChild: Text("${widget.index}",
+            style: TextStyle(
+                fontSize: widget.tileSize / 1.5, color: HexColor("999999"))),
         rotationY: widget.yTilt,
         rotationX: widget.xTilt,
         depth: widget.percentDepth * 10,
-        direction: ZDirection.forwards,
-        layers: 15,
+        direction: ZDirection.backwards,
+        layers: 10,
       );
     } else {
       text = Text(
         "${widget.index}",
         style: TextStyle(
-          fontSize: widget.tileSize / 2,
+          fontSize: widget.tileSize / 1.5,
           color: Colors.white.withOpacity(widget.percentOpacity),
         ),
       );
@@ -86,12 +85,13 @@ class _PuzzleTileWidgetState extends State<PuzzleTileAnyWidget> {
         ((widget.index - 1) % nbTiles) * (1 / (nbTiles - 1)),
         ((widget.index - 1) ~/ nbTiles) * (1 / (nbTiles - 1)));
 
-    text = SizedBox(
+    final content = SizedBox(
       width: widget.tileSize,
       height: widget.tileSize,
       child: Stack(children: [
         Positioned.fill(
-          child: ClipRect(
+          child: ClipRRect(
+            borderRadius: widget.borderRadius,
             child: OverflowBox(
               maxWidth: double.infinity,
               maxHeight: double.infinity,
@@ -111,19 +111,21 @@ class _PuzzleTileWidgetState extends State<PuzzleTileAnyWidget> {
     return Padding(
       child: InkWell(
         child: ZWidget(
-            rotationY: widget.xTilt,
-            rotationX: widget.yTilt,
-            depth: 0.01 * widget.canvasRect.shortestSide,
-            direction: ZDirection.forwards,
-            layers: 20,
-            aboveChild: Container(
+            rotationY: -widget.xTilt,
+            rotationX: -widget.yTilt,
+            depth: 1,
+            // 0.05 * widget.canvasRect.shortestSide,
+            direction: ZDirection.backwards,
+            layers: 10,
+            alignment: Alignment.bottomCenter,
+            belowChild: Container(
               width: widget.tileSize,
               height: widget.tileSize,
               decoration: BoxDecoration(
-                  color: Colors.black, borderRadius: BorderRadius.circular(0)),
+                  color: Colors.black, borderRadius: widget.borderRadius),
             ),
             child: Center(
-              child: text,
+              child: content,
             )),
         onTap: widget.onTap,
       ),
