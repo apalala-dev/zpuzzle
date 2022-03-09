@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:equatable/equatable.dart';
 import 'package:slide_puzzle/model/position.dart';
 
@@ -10,6 +12,7 @@ class Tile extends Equatable {
     required this.value,
     required this.correctPosition,
     required this.currentPosition,
+    required this.previousPosition,
     this.isWhitespace = false,
   });
 
@@ -23,17 +26,62 @@ class Tile extends Equatable {
   /// The current 2D [Position] of the [Tile].
   final Position currentPosition;
 
+  /// The previous 2D [Position] of the [Tile].
+  final Position previousPosition;
+
   /// Denotes if the [Tile] is the whitespace tile or not.
   final bool isWhitespace;
 
   bool get isInCorrectPosition => currentPosition == correctPosition;
 
+  double get previousIndicatorAngle => _indicatorAngle(previousPosition);
+
+  double get currentIndicatorAngle => _indicatorAngle(currentPosition);
+
+  double _indicatorAngle(Position position) {
+    final corX = correctPosition.x;
+    final corY = correctPosition.y;
+    final posX = position.x;
+    final posY = position.y;
+
+    if (posX > corX) {
+      if (posY > corY) {
+        // (1, 1) > (0, 0)
+        return -3 * pi / 4;
+      } else if (posY == corY) {
+        return pi;
+      } else {
+        return 3 * pi / 4;
+      }
+    } else if (posX < corX) {
+      if (posY > corY) {
+        // (1, 1) > (0, 0)
+        return -pi / 4;
+      } else if (posY == corY) {
+        return 0;
+      } else {
+        return pi / 4;
+      }
+    } else {
+      // posX == corX
+      if (posY > corY) {
+        // (1, 1) > (0, 0)
+        return -pi / 2;
+      } else if (posY == corY) {
+        return 0;
+      } else {
+        return pi / 2;
+      }
+    }
+  }
+
   /// Create a copy of this [Tile] with updated current position.
-  Tile copyWith({required Position currentPosition}) {
+  Tile copyWith({Position? newCurrentPosition, Position? newPreviousPosition}) {
     return Tile(
       value: value,
       correctPosition: correctPosition,
-      currentPosition: currentPosition,
+      currentPosition: newCurrentPosition ?? currentPosition,
+      previousPosition: newPreviousPosition ?? previousPosition,
       isWhitespace: isWhitespace,
     );
   }
@@ -73,5 +121,9 @@ class Tile extends Equatable {
   Position? bottom(List<Position> lockedPositions, int dimension) {
     return _move(Position(x: currentPosition.x, y: currentPosition.y + 1),
         lockedPositions, dimension);
+  }
+
+  bool hasMoved() {
+    return currentPosition != previousPosition;
   }
 }

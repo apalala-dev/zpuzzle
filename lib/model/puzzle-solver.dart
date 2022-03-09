@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:slide_puzzle/model/position.dart';
 import 'package:slide_puzzle/model/puzzle.dart';
 import 'package:slide_puzzle/model/tile.dart';
@@ -127,15 +128,12 @@ class PuzzleSolver {
 
         // Move dim-1 tile to its correctPosition (one move only needed)
         puzzle = puzzle.moveTiles(
-            puzzle.tiles.firstWhere((t) => t.currentPosition == tmpLockedTile),
-            []);
+            puzzle.tiles.firstWhere((t) => t.currentPosition == tmpLockedTile));
         lockedTiles.add(puzzle.tiles.firstWhere(
             (t) => t.currentPosition == posToTake[posToTake.length - 2]));
         // Move dim tile to its correctPosition (one move only needed)
-        puzzle = puzzle.moveTiles(
-            puzzle.tiles
-                .firstWhere((t) => t.currentPosition == secondLockedTile),
-            []);
+        puzzle = puzzle.moveTiles(puzzle.tiles
+            .firstWhere((t) => t.currentPosition == secondLockedTile));
         lockedTiles.add(puzzle.tiles.firstWhere(
             (t) => t.currentPosition == posToTake[posToTake.length - 1]));
         // Row or column should be fixed now!
@@ -158,89 +156,92 @@ class PuzzleSolver {
 
   Puzzle solve3x2(Puzzle puzzle) {
     var dim = puzzle.getDimension();
-    Position prime1EndPos = Position(x: dim - 2, y: dim - 1);
-    Position prime4EndPos = Position(x: dim - 2, y: dim);
-    Tile prime1 =
-        puzzle.tiles.firstWhere((t) => t.correctPosition == prime1EndPos);
-    Tile prime4 =
-        puzzle.tiles.firstWhere((t) => t.correctPosition == prime4EndPos);
-    List<Position> baseLocked = [
-      ...puzzle.tiles
-          .where((t) => !(t.currentPosition.x >= puzzle.getDimension() - 2 &&
-              t.currentPosition.y >= puzzle.getDimension() - 1))
-          .map((t) => t.currentPosition)
-    ];
-
-    if (!(prime1.isInCorrectPosition && prime4.isInCorrectPosition)) {
-      // Put them in the good position to just have to solve the 2x2 puzzle
-      var white = puzzle.getWhitespaceTile();
-      if (white.currentPosition.y != dim - 1) {
-        // TODO check if necessart
-        puzzle = moveWhiteTileTo(puzzle,
-            Position(x: white.currentPosition.x, y: dim - 1), baseLocked);
-      }
-      // print("A:\n${puzzle.toVisualString()}");
-      prime4 =
-          puzzle.tiles.firstWhere((t) => t.correctPosition == prime4EndPos);
-      puzzle = moveTileToPosition(
-          puzzle, prime4, Position(x: dim, y: dim), baseLocked);
-      prime1 =
+    final List<Position> locked = [];
+    if (dim > 2) {
+      Position prime1EndPos = Position(x: dim - 2, y: dim - 1);
+      Position prime4EndPos = Position(x: dim - 2, y: dim);
+      Tile prime1 =
           puzzle.tiles.firstWhere((t) => t.correctPosition == prime1EndPos);
-      prime4 =
+      Tile prime4 =
           puzzle.tiles.firstWhere((t) => t.correctPosition == prime4EndPos);
-      // print("B:\n${puzzle.toVisualString()}");
-      var tmpWhite = puzzle.getWhitespaceTile();
-      if (tmpWhite.currentPosition.x == dim) {
-        puzzle = moveWhiteTileTo(
-            puzzle,
-            Position(
-                x: tmpWhite.currentPosition.x - 1,
-                y: tmpWhite.currentPosition.y),
-            baseLocked);
-      }
-      // print("C:\n${puzzle.toVisualString()}");
-      puzzle = moveTileToPosition(
-          puzzle,
-          puzzle.tiles.firstWhere((t) => t.correctPosition == prime1EndPos),
-          prime4EndPos,
-          baseLocked);
-      // print("D:\n${puzzle.toVisualString()}");
-      puzzle = moveTileToPosition(
-          puzzle,
-          puzzle.tiles.firstWhere((t) => t.correctPosition == prime4EndPos),
-          Position(x: dim - 1, y: dim),
-          [...baseLocked, prime4EndPos]);
-      // print("E:\n${puzzle.toVisualString()}");
-      puzzle = moveTileToPosition(
-          puzzle,
-          puzzle.tiles.firstWhere((t) => t.correctPosition == prime1EndPos),
-          prime1EndPos,
-          [...baseLocked, Position(x: dim - 1, y: dim)]);
-      // print("F:\n${puzzle.toVisualString()}");
-      puzzle = moveTileToPosition(
-          puzzle,
-          puzzle.tiles.firstWhere((t) => t.correctPosition == prime4EndPos),
-          prime4EndPos,
-          baseLocked);
-      // rotation2x2(
-      //   puzzle,
-      //   puzzle.tiles.firstWhere(
-      //       (t) => t.currentPosition == Position(x: dim - 1, y: dim - 1)),
-      //   puzzle.tiles.firstWhere(
-      //       (t) => t.currentPosition == Position(x: dim, y: dim - 1)),
-      //   puzzle.tiles
-      //       .firstWhere((t) => t.currentPosition == Position(x: dim, y: dim)),
-      //   puzzle.tiles.firstWhere(
-      //       (t) => t.currentPosition == Position(x: dim - 1, y: dim)),
-      // );
-    }
-    // print("G:\n${puzzle.toVisualString()}");
+      List<Position> baseLocked = [
+        ...puzzle.tiles
+            .where((t) => !(t.currentPosition.x >= puzzle.getDimension() - 2 &&
+                t.currentPosition.y >= puzzle.getDimension() - 1))
+            .map((t) => t.currentPosition)
+      ];
 
-    var locked = [
-      ...baseLocked,
-      prime1EndPos,
-      prime4EndPos,
-    ];
+      if (!(prime1.isInCorrectPosition && prime4.isInCorrectPosition)) {
+        // Put them in the good position to just have to solve the 2x2 puzzle
+        var white = puzzle.getWhitespaceTile();
+        if (white.currentPosition.y != dim - 1) {
+          // TODO check if necessart
+          puzzle = moveWhiteTileTo(puzzle,
+              Position(x: white.currentPosition.x, y: dim - 1), baseLocked);
+        }
+        // print("A:\n${puzzle.toVisualString()}");
+        prime4 =
+            puzzle.tiles.firstWhere((t) => t.correctPosition == prime4EndPos);
+        puzzle = moveTileToPosition(
+            puzzle, prime4, Position(x: dim, y: dim), baseLocked);
+        prime1 =
+            puzzle.tiles.firstWhere((t) => t.correctPosition == prime1EndPos);
+        prime4 =
+            puzzle.tiles.firstWhere((t) => t.correctPosition == prime4EndPos);
+        // print("B:\n${puzzle.toVisualString()}");
+        var tmpWhite = puzzle.getWhitespaceTile();
+        if (tmpWhite.currentPosition.x == dim) {
+          puzzle = moveWhiteTileTo(
+              puzzle,
+              Position(
+                  x: tmpWhite.currentPosition.x - 1,
+                  y: tmpWhite.currentPosition.y),
+              baseLocked);
+        }
+        // print("C:\n${puzzle.toVisualString()}");
+        puzzle = moveTileToPosition(
+            puzzle,
+            puzzle.tiles.firstWhere((t) => t.correctPosition == prime1EndPos),
+            prime4EndPos,
+            baseLocked);
+        // print("D:\n${puzzle.toVisualString()}");
+        puzzle = moveTileToPosition(
+            puzzle,
+            puzzle.tiles.firstWhere((t) => t.correctPosition == prime4EndPos),
+            Position(x: dim - 1, y: dim),
+            [...baseLocked, prime4EndPos]);
+        // print("E:\n${puzzle.toVisualString()}");
+        puzzle = moveTileToPosition(
+            puzzle,
+            puzzle.tiles.firstWhere((t) => t.correctPosition == prime1EndPos),
+            prime1EndPos,
+            [...baseLocked, Position(x: dim - 1, y: dim)]);
+        // print("F:\n${puzzle.toVisualString()}");
+        puzzle = moveTileToPosition(
+            puzzle,
+            puzzle.tiles.firstWhere((t) => t.correctPosition == prime4EndPos),
+            prime4EndPos,
+            baseLocked);
+        // rotation2x2(
+        //   puzzle,
+        //   puzzle.tiles.firstWhere(
+        //       (t) => t.currentPosition == Position(x: dim - 1, y: dim - 1)),
+        //   puzzle.tiles.firstWhere(
+        //       (t) => t.currentPosition == Position(x: dim, y: dim - 1)),
+        //   puzzle.tiles
+        //       .firstWhere((t) => t.currentPosition == Position(x: dim, y: dim)),
+        //   puzzle.tiles.firstWhere(
+        //       (t) => t.currentPosition == Position(x: dim - 1, y: dim)),
+        // );
+      }
+      // print("G:\n${puzzle.toVisualString()}");
+
+      locked.addAll([
+        ...baseLocked,
+        prime1EndPos,
+        prime4EndPos,
+      ]);
+    }
 
     // After this we have a 2x2 puzzle to solve, by rotating pieces around until
     // they match well
@@ -387,8 +388,8 @@ class PuzzleSolver {
           ]);
         }
         // Swap p and WhiteTile
-        puzzle = puzzle.moveTiles(
-            puzzle.tiles.firstWhere((t) => t.value == tile.value), []);
+        puzzle = puzzle
+            .moveTiles(puzzle.tiles.firstWhere((t) => t.value == tile.value));
         // Don't come back to the tile we're on now
         // lockedPosition.add(p.currentPosition);
         // Don't come back to the current white tile neither?
@@ -471,7 +472,7 @@ class PuzzleSolver {
     }
     for (var pW in pathWhiteToP) {
       // Move the white tile one step at a time
-      puzzle = puzzle.moveTiles(pW, []);
+      puzzle = puzzle.moveTiles(pW);
     }
     return puzzle;
   }
@@ -497,68 +498,52 @@ class PuzzleSolver {
         if (curWhite.y == dim) {
           if (curWhite.x == dim - 2) {
             // Go Up
-            puzzle = puzzle.moveTiles(
-                tiles.firstWhere((t) =>
-                    t.currentPosition ==
-                    Position(x: curWhite.x, y: curWhite.y - 1)),
-                []);
+            puzzle = puzzle.moveTiles(tiles.firstWhere((t) =>
+                t.currentPosition ==
+                Position(x: curWhite.x, y: curWhite.y - 1)));
           } else {
             // Go left
-            puzzle = puzzle.moveTiles(
-                tiles.firstWhere((t) =>
-                    t.currentPosition ==
-                    Position(x: curWhite.x - 1, y: curWhite.y)),
-                []);
+            puzzle = puzzle.moveTiles(tiles.firstWhere((t) =>
+                t.currentPosition ==
+                Position(x: curWhite.x - 1, y: curWhite.y)));
           }
         } else {
           if (curWhite.x == dim) {
             // Go down
-            puzzle = puzzle.moveTiles(
-                tiles.firstWhere((t) =>
-                    t.currentPosition ==
-                    Position(x: curWhite.x, y: curWhite.y + 1)),
-                []);
+            puzzle = puzzle.moveTiles(tiles.firstWhere((t) =>
+                t.currentPosition ==
+                Position(x: curWhite.x, y: curWhite.y + 1)));
           } else {
             // Go right
-            puzzle = puzzle.moveTiles(
-                tiles.firstWhere((t) =>
-                    t.currentPosition ==
-                    Position(x: curWhite.x + 1, y: curWhite.y)),
-                []);
+            puzzle = puzzle.moveTiles(tiles.firstWhere((t) =>
+                t.currentPosition ==
+                Position(x: curWhite.x + 1, y: curWhite.y)));
           }
         }
       } else {
         if (curWhite.y == dim - 1) {
           if (curWhite.x == dim - 2) {
             // Go Down
-            puzzle = puzzle.moveTiles(
-                tiles.firstWhere((t) =>
-                    t.currentPosition ==
-                    Position(x: curWhite.x, y: curWhite.y + 1)),
-                []);
+            puzzle = puzzle.moveTiles(tiles.firstWhere((t) =>
+                t.currentPosition ==
+                Position(x: curWhite.x, y: curWhite.y + 1)));
           } else {
             // Go left
-            puzzle = puzzle.moveTiles(
-                tiles.firstWhere((t) =>
-                    t.currentPosition ==
-                    Position(x: curWhite.x - 1, y: curWhite.y)),
-                []);
+            puzzle = puzzle.moveTiles(tiles.firstWhere((t) =>
+                t.currentPosition ==
+                Position(x: curWhite.x - 1, y: curWhite.y)));
           }
         } else {
           if (curWhite.x == dim) {
             // Go Up
-            puzzle = puzzle.moveTiles(
-                tiles.firstWhere((t) =>
-                    t.currentPosition ==
-                    Position(x: curWhite.x, y: curWhite.y - 1)),
-                []);
+            puzzle = puzzle.moveTiles(tiles.firstWhere((t) =>
+                t.currentPosition ==
+                Position(x: curWhite.x, y: curWhite.y - 1)));
           } else {
             // Go right
-            puzzle = puzzle.moveTiles(
-                tiles.firstWhere((t) =>
-                    t.currentPosition ==
-                    Position(x: curWhite.x + 1, y: curWhite.y)),
-                []);
+            puzzle = puzzle.moveTiles(tiles.firstWhere((t) =>
+                t.currentPosition ==
+                Position(x: curWhite.x + 1, y: curWhite.y)));
           }
         }
       }

@@ -45,5 +45,15 @@
 	<true/>
 	<key>io.flutter.embedded_views_preview</key>
     <true/>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Load photos in Slide Puzzle</string>
+    <key>NSCameraUsageDescription</key>
+    <string>Load photos in Slide Puzzle</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Load photos in Slide Puzzle</string>
+    <key>LSSupportsOpeningDocumentsInPlace</key>
+    <true/>
+    <key>UIFileSharingEnabled</key>
+    <true/>
 </dict>
 </plist>

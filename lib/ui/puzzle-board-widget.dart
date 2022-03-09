@@ -78,7 +78,7 @@ class _PuzzleBoardWidgetState extends State<PuzzleBoardWidget> {
         depth: 0.05 * contentSize.shortestSide,
         direction: ZDirection.backwards,
         layers: 10,
-        child: Container(
+        midChild: Container(
           child: Container(
             child: _boardTiles(
               screenSize: screenSize,
@@ -106,7 +106,7 @@ class _PuzzleBoardWidgetState extends State<PuzzleBoardWidget> {
               borderRadius:
                   BorderRadius.circular(contentSize.shortestSide / 30)),
         ),
-        belowChild: Container(
+        midToBotChild: Container(
           width: innerBoardSpacing * 4 +
               squareSize * nbColumns +
               tileSpacing * (nbColumns - 1),
@@ -128,7 +128,7 @@ class _PuzzleBoardWidgetState extends State<PuzzleBoardWidget> {
         depth: 0.05 * contentSize.shortestSide,
         direction: ZDirection.backwards,
         layers: 10,
-        child: Container(
+        midChild: Container(
           child: Container(
             child: _boardTiles(
               screenSize: screenSize,
@@ -221,7 +221,7 @@ class _PuzzleBoardWidgetState extends State<PuzzleBoardWidget> {
                           borderRadius: BorderRadius.circular(
                               contentSize.shortestSide / 50),
                           child: PuzzleTileAnyWidget(
-                            tile.value,
+                            tile,
                             xTilt: 0,
                             yTilt: 0,
                             canvasRect: canvasRect,
@@ -232,8 +232,8 @@ class _PuzzleBoardWidgetState extends State<PuzzleBoardWidget> {
                             percentDepth: percentDepthText,
                             percentOpacity: percentOpacityText,
                             nbTiles: widget.puzzle.getDimension(),
-                            borderRadius:
-                                BorderRadius.circular(contentSize.shortestSide / 30),
+                            borderRadius: BorderRadius.circular(
+                                contentSize.shortestSide / 30),
                             child: widget.backgroundWidget ??
                                 RiveAnimation.asset(
                                   'assets/rive/earth.riv',
@@ -245,7 +245,7 @@ class _PuzzleBoardWidgetState extends State<PuzzleBoardWidget> {
                               if (widget.puzzle.isTileMovable(tile)) {
                                 // print("movable tile $tile");
                                 setState(() {
-                                  widget.puzzle.moveTiles(tile, []);
+                                  widget.puzzle.moveTiles(tile);
                                   // print("tile moved $tile");
                                 });
                               }
@@ -273,11 +273,11 @@ class _PuzzleBoardWidgetState extends State<PuzzleBoardWidget> {
                               color: Colors.pink,
                               child: Center(
                                   child: ZWidget(
-                                child: Text("8",
+                                midChild: Text("8",
                                     style: TextStyle(
                                         fontSize: squareSize / 2,
                                         color: Colors.white)),
-                                belowChild: Text("8",
+                                midToBotChild: Text("8",
                                     style: TextStyle(
                                         fontSize: squareSize / 2,
                                         color: HexColor("999999"))),

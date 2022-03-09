@@ -133,7 +133,7 @@ class _PuzzleBoardWidgetState extends State<OldPuzzleBoardWidget> {
                             borderRadius:
                                 BorderRadius.circular(size.shortestSide / 50),
                             child: PuzzleTileAnyWidget(
-                              tile.value,
+                              tile,
                               xTilt: xTilt,
                               yTilt: yTilt,
                               canvasRect: canvasRect,
@@ -157,7 +157,7 @@ class _PuzzleBoardWidgetState extends State<OldPuzzleBoardWidget> {
                                 if (widget.puzzle.isTileMovable(tile)) {
                                   // print("movable tile $tile");
                                   setState(() {
-                                    widget.puzzle.moveTiles(tile, []);
+                                    widget.puzzle.moveTiles(tile);
                                     // print("tile moved $tile");
                                   });
                                 }
@@ -187,7 +187,7 @@ class _PuzzleBoardWidgetState extends State<OldPuzzleBoardWidget> {
           depth: 0.05 * size.shortestSide,
           direction: ZDirection.backwards,
           layers: 10,
-          aboveChild: Container(
+          midToTopChild: Container(
             width: squareSize * nbColumns + tileSpacing * (nbColumns - 1),
             height: squareSize * nbColumns + tileSpacing * (nbColumns - 1),
             padding: EdgeInsets.all(innerBoardSpacing),
@@ -196,7 +196,7 @@ class _PuzzleBoardWidgetState extends State<OldPuzzleBoardWidget> {
               borderRadius: BorderRadius.circular(16),
             ),
           ),
-          belowChild: Container(
+          midToBotChild: Container(
             width: innerBoardSpacing * 4 +
                 squareSize * nbColumns +
                 tileSpacing * (nbColumns - 1),
@@ -209,7 +209,7 @@ class _PuzzleBoardWidgetState extends State<OldPuzzleBoardWidget> {
               borderRadius: BorderRadius.circular(16),
             ),
           ),
-          child: Container(
+          midChild: Container(
             child: Container(
               child: boardTiles,
               padding: EdgeInsets.all(innerBoardSpacing),

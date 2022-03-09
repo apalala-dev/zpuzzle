@@ -69,8 +69,8 @@ class _SizePickerState extends State<SizePicker>
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
       return SizedBox(
-        width: constraints.maxWidth,
         height: constraints.maxHeight,
+        width: (constraints.maxHeight) * _dimensions.length,
         child: Center(
             child: ListView.builder(
                 scrollDirection: Axis.horizontal,
@@ -131,52 +131,6 @@ class _SizePickerState extends State<SizePicker>
                       }
                     },
                   );
-
-                  return Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        SizedBox(
-                          height: constraints.maxHeight - 40,
-                          width: constraints.maxHeight - 40,
-                          child: AnimatedPadding(
-                            padding: EdgeInsets.all(
-                                _selectedDimension == idx ? 0 : 10),
-                            duration: 400.milliseconds,
-                            curve: Curves.ease,
-                            child: InkWell(
-                              splashColor: Colors.pink,
-                              borderRadius: BorderRadius.circular(
-                                  (1 / _dimensions[idx]) * 8),
-                              child: GridView.builder(
-                                  shrinkWrap: true,
-                                  itemCount:
-                                      _dimensions[idx] * _dimensions[idx],
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: _dimensions[idx]),
-                                  itemBuilder: (ctx, i) {
-                                    return Padding(
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                            color: Colors.grey,
-                                            borderRadius: BorderRadius.circular(
-                                                (1 / _dimensions[idx]) * 8)),
-                                      ),
-                                      padding:
-                                          EdgeInsets.all(4 / _dimensions[idx]),
-                                    );
-                                  }),
-                              onTap: () {
-                                setState(() {
-                                  _selectedDimension = idx;
-                                });
-                                widget.onSizePicked(_dimensions[idx]);
-                              },
-                            ),
-                          ),
-                        ),
-                        Text("${_dimensions[idx]}x${_dimensions[idx]}")
-                      ]);
                 })),
       );
     });

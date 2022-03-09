@@ -105,6 +105,7 @@ class Puzzle extends Equatable {
             value: i,
             correctPosition: whitespacePosition,
             currentPosition: currentPositions[i - 1],
+            previousPosition: currentPositions[i - 1],
             isWhitespace: true,
           )
         else
@@ -112,6 +113,7 @@ class Puzzle extends Equatable {
             value: i,
             correctPosition: correctPositions[i - 1],
             currentPosition: currentPositions[i - 1],
+            previousPosition: currentPositions[i - 1],
           )
     ];
   }
@@ -263,10 +265,35 @@ class Puzzle extends Equatable {
   ///
   // Recursively stores a list of all tiles that need to be moved and passes the
   // list to _swapTiles to individually swap them.
-  Puzzle moveTiles(Tile tile, List<Tile> tilesToSwap) {
+  Puzzle moveTiles(Tile tile) {
+    final oldTiles = [
+      ...tiles.map((t) => t.copyWith(newCurrentPosition: t.currentPosition))
+    ];
+
+    final newPuzzle = _moveTiles(tile, []);
+
+    for (int i = 0; i < newPuzzle.tiles.length; i++) {
+      // If it already as a different previousPosition than currentPosition,
+      // the previousPosition is going to be updated by the animationController
+      // at the end of the animation.
+      // It allows multiple animations to run at the same time.
+      if (!newPuzzle.tiles[i].hasMoved()) {
+        newPuzzle.tiles[i] = newPuzzle.tiles[i].copyWith(
+            newPreviousPosition: oldTiles
+                .firstWhere((o) => o.value == newPuzzle.tiles[i].value)
+                .currentPosition);
+      }
+    }
+    return newPuzzle;
+  }
+
+  /// Shifts one or many tiles in a row/column with the whitespace and returns
+  /// the modified puzzle.
+  ///
+  // Recursively stores a list of all tiles that need to be moved and passes the
+  // list to _swapTiles to individually swap them.
+  Puzzle _moveTiles(Tile tile, List<Tile> tilesToSwap) {
     if (tilesToSwap.isEmpty) {
-      // history.add(tile.currentPosition);
-      // history.add(getWhitespaceTile().currentPosition);
       _nbMovesSink.add(++_nbMoves);
     }
     final whitespaceTile = getWhitespaceTile();
@@ -282,10 +309,10 @@ class Puzzle extends Equatable {
             tile.currentPosition.y == shiftPointY,
       );
       tilesToSwap.add(tile);
-      return moveTiles(tileToSwapWith, tilesToSwap);
+      return _moveTiles(tileToSwapWith, tilesToSwap);
     } else {
       tilesToSwap.add(tile);
-      var result =  _swapTiles(tilesToSwap);
+      var result = _swapTiles(tilesToSwap);
       history.add(getWhitespaceTile().currentPosition);
       return result;
     }
@@ -302,10 +329,10 @@ class Puzzle extends Equatable {
 
       // Swap current board positions of the moving tile and the whitespace.
       tiles[tileIndex] = tile.copyWith(
-        currentPosition: whitespaceTile.currentPosition,
+        newCurrentPosition: whitespaceTile.currentPosition,
       );
       tiles[whitespaceTileIndex] = whitespaceTile.copyWith(
-        currentPosition: tile.currentPosition,
+        newCurrentPosition: tile.currentPosition,
       );
     }
 

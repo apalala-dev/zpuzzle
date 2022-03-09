@@ -12,81 +12,97 @@ void main() {
         value: 1,
         correctPosition: Position(x: 1, y: 1),
         currentPosition: Position(x: 2, y: 1),
+        previousPosition: Position(x: 2, y: 1),
         isWhitespace: false),
     Tile(
         value: 2,
         correctPosition: Position(x: 2, y: 1),
         currentPosition: Position(x: 3, y: 1),
+        previousPosition: Position(x: 3, y: 1),
         isWhitespace: false),
     Tile(
         value: 3,
         correctPosition: Position(x: 3, y: 1),
         currentPosition: Position(x: 1, y: 1),
+        previousPosition: Position(x: 1, y: 1),
         isWhitespace: false),
     Tile(
         value: 4,
         correctPosition: Position(x: 4, y: 1),
         currentPosition: Position(x: 1, y: 3),
+        previousPosition: Position(x: 1, y: 3),
         isWhitespace: false),
     Tile(
         value: 5,
         correctPosition: Position(x: 1, y: 2),
         currentPosition: Position(x: 2, y: 2),
+        previousPosition: Position(x: 2, y: 2),
         isWhitespace: false),
     Tile(
         value: 6,
         correctPosition: Position(x: 2, y: 2),
         currentPosition: Position(x: 4, y: 1),
+        previousPosition: Position(x: 4, y: 1),
         isWhitespace: false),
     Tile(
         value: 7,
         correctPosition: Position(x: 3, y: 2),
         currentPosition: Position(x: 4, y: 3),
+        previousPosition: Position(x: 4, y: 3),
         isWhitespace: false),
     Tile(
         value: 8,
         correctPosition: Position(x: 4, y: 2),
         currentPosition: Position(x: 1, y: 4),
+        previousPosition: Position(x: 1, y: 4),
         isWhitespace: false),
     Tile(
         value: 9,
         correctPosition: Position(x: 1, y: 3),
         currentPosition: Position(x: 3, y: 3),
+        previousPosition: Position(x: 3, y: 3),
         isWhitespace: false),
     Tile(
         value: 10,
         correctPosition: Position(x: 2, y: 3),
         currentPosition: Position(x: 1, y: 2),
+        previousPosition: Position(x: 1, y: 2),
         isWhitespace: false),
     Tile(
         value: 11,
         correctPosition: Position(x: 3, y: 3),
         currentPosition: Position(x: 4, y: 4),
+        previousPosition: Position(x: 4, y: 4),
         isWhitespace: false),
     Tile(
         value: 12,
         correctPosition: Position(x: 4, y: 3),
         currentPosition: Position(x: 3, y: 2),
+        previousPosition: Position(x: 3, y: 2),
         isWhitespace: false),
     Tile(
         value: 13,
         correctPosition: Position(x: 1, y: 4),
         currentPosition: Position(x: 4, y: 2),
+        previousPosition: Position(x: 4, y: 2),
         isWhitespace: false),
     Tile(
         value: 14,
         correctPosition: Position(x: 2, y: 4),
         currentPosition: Position(x: 3, y: 4),
+        previousPosition: Position(x: 3, y: 4),
         isWhitespace: false),
     Tile(
         value: 15,
         correctPosition: Position(x: 3, y: 4),
         currentPosition: Position(x: 2, y: 4),
+        previousPosition: Position(x: 2, y: 4),
         isWhitespace: false),
     Tile(
         value: 16,
         correctPosition: Position(x: 4, y: 4),
         currentPosition: Position(x: 2, y: 3),
+        previousPosition: Position(x: 2, y: 3),
         isWhitespace: true),
   ]);
 
@@ -240,47 +256,47 @@ void main() {
         "Puzzle has ${puzzle.tiles.where((t) => t.currentPosition != t.correctPosition).length} tiles instead of the 3x2 grid expected");
 
     // puzzle = solver.solve3x2(puzzle);
-    assert(puzzle.isComplete(), "Puzzle is not solved:\n${puzzle.toVisualString()}");
+    assert(puzzle.isComplete(),
+        "Puzzle is not solved:\n${puzzle.toVisualString()}");
   });
-
 
   test("Solve already solved puzzle 3x3", () {
     // for(int i = 0;i< 100; i++) {
-      PuzzleSolver solver = PuzzleSolver();
-      Puzzle puzzle = Puzzle.generate(3, shuffle: false);
-      puzzle = solver.solve(puzzle);
-      print("Puzzle complete in ${puzzle.history.length} moves");
-      assert(puzzle.isComplete(), "Puzzle is not solved:\n${puzzle
-          .toVisualString()}");
+    PuzzleSolver solver = PuzzleSolver();
+    Puzzle puzzle = Puzzle.generate(3, shuffle: false);
+    puzzle = solver.solve(puzzle);
+    print("Puzzle complete in ${puzzle.history.length} moves");
+    assert(puzzle.isComplete(),
+        "Puzzle is not solved:\n${puzzle.toVisualString()}");
     // }
   });
 
   test("Solve random puzzle 3x3", () {
-    for(int i = 0;i< 3; i++) {
+    for (int i = 0; i < 3; i++) {
       PuzzleSolver solver = PuzzleSolver();
       Puzzle puzzle = Puzzle.generate(3);
       puzzle = solver.solve(puzzle);
       print("Puzzle complete in ${puzzle.history.length} moves");
-      assert(puzzle.isComplete(), "Puzzle $i is not solved:\n${puzzle
-          .toVisualString()}");
+      assert(puzzle.isComplete(),
+          "Puzzle $i is not solved:\n${puzzle.toVisualString()}");
     }
   });
   test("Solve random puzzle 4x4", () {
-    for(int i = 0;i< 100; i++) {
+    for (int i = 0; i < 100; i++) {
       PuzzleSolver solver = PuzzleSolver();
       Puzzle puzzle = Puzzle.generate(4);
       puzzle = solver.solve(puzzle);
-      assert(puzzle.isComplete(), "Puzzle is not solved:\n${puzzle
-          .toVisualString()}");
+      assert(puzzle.isComplete(),
+          "Puzzle is not solved:\n${puzzle.toVisualString()}");
     }
   });
   test("Solve random puzzle 5x5", () {
-    for(int i = 0;i< 100; i++) {
+    for (int i = 0; i < 100; i++) {
       PuzzleSolver solver = PuzzleSolver();
       Puzzle puzzle = Puzzle.generate(5);
       puzzle = solver.solve(puzzle);
-      assert(puzzle.isComplete(), "Puzzle is not solved:\n${puzzle
-          .toVisualString()}");
+      assert(puzzle.isComplete(),
+          "Puzzle is not solved:\n${puzzle.toVisualString()}");
     }
   });
 

@@ -56,19 +56,35 @@ class _PuzzleTileWidgetState extends State<PuzzleRiveTileWidget> {
     );
 
     if (widget.percentDepth > 0) {
-      text = ZWidget(
-        child: Text("${widget.index}",
-            style:
-                TextStyle(fontSize: widget.tileSize / 2, color: Colors.white)),
-        aboveChild: Text("${widget.index}",
-            style: TextStyle(
-                fontSize: widget.tileSize / 2, color: HexColor("999999"))),
-        rotationY: widget.yTilt,
-        rotationX: widget.xTilt,
-        depth: widget.percentDepth * 10,
-        direction: ZDirection.forwards,
-        layers: 15,
-      );
+      if (true) {
+        text = ZWidget(
+          midChild: Text("${widget.index}",
+              style: TextStyle(
+                  fontSize: widget.tileSize / 2, color: Colors.white)),
+          midToTopChild: Text("${widget.index}",
+              style: TextStyle(
+                  fontSize: widget.tileSize / 2, color: HexColor("999999"))),
+          rotationY: widget.yTilt,
+          rotationX: widget.xTilt,
+          depth: widget.percentDepth * 10,
+          direction: ZDirection.forwards,
+          layers: 15,
+        );
+      } else {
+        text = ZWidget(
+          midChild: Text("${widget.index}",
+              style: TextStyle(
+                  fontSize: widget.tileSize / 2, color: Colors.white)),
+          midToTopChild: Text("${widget.index}",
+              style: TextStyle(
+                  fontSize: widget.tileSize / 2, color: HexColor("999999"))),
+          rotationY: widget.yTilt,
+          rotationX: widget.xTilt,
+          depth: widget.percentDepth * 10,
+          direction: ZDirection.forwards,
+          layers: 15,
+        );
+      }
     } else {
       text = Text(
         "${widget.index}",
@@ -164,13 +180,13 @@ class _PuzzleTileWidgetState extends State<PuzzleRiveTileWidget> {
             depth: 0.01 * widget.canvasRect.shortestSide,
             direction: ZDirection.forwards,
             layers: 20,
-            aboveChild: Container(
+            midToTopChild: Container(
               width: widget.tileSize,
               height: widget.tileSize,
               decoration: BoxDecoration(
                   color: Colors.black, borderRadius: BorderRadius.circular(0)),
             ),
-            child: Center(
+            midChild: Center(
               child: text,
             )),
         onTap: widget.onTap,

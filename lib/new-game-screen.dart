@@ -428,8 +428,7 @@ class _NewGameScreenState extends State<NewGameScreen>
       await Future.delayed(Duration(milliseconds: 450));
       setState(() {
         _puzzle = _puzzle.moveTiles(
-            _puzzle.tiles.firstWhere((element) => element.currentPosition == h),
-            []);
+            _puzzle.tiles.firstWhere((element) => element.currentPosition == h));
       });
     }
     setState(() {

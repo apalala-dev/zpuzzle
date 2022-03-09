@@ -54,10 +54,10 @@ class _PuzzleTileWidgetState extends State<PuzzleTileWidget> {
 
     if (widget.percentDepth > 0) {
       text = ZWidget(
-        child: Text("${widget.index}",
+        midChild: Text("${widget.index}",
             style:
                 TextStyle(fontSize: widget.tileSize / 2, color: Colors.white)),
-        aboveChild: Text("${widget.index}",
+        midToTopChild: Text("${widget.index}",
             style: TextStyle(
                 fontSize: widget.tileSize / 2, color: HexColor("999999"))),
         rotationY: widget.yTilt,
@@ -112,13 +112,13 @@ class _PuzzleTileWidgetState extends State<PuzzleTileWidget> {
             depth: 0.01 * widget.canvasRect.shortestSide,
             direction: ZDirection.forwards,
             layers: 20,
-            aboveChild: Container(
+            midToTopChild: Container(
               width: widget.tileSize,
               height: widget.tileSize,
               decoration: BoxDecoration(
                   color: Colors.black, borderRadius: BorderRadius.circular(0)),
             ),
-            child: Center(
+            midChild: Center(
               child: text,
             )),
         onTap: widget.onTap,

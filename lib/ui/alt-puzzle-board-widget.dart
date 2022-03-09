@@ -64,7 +64,7 @@ class _AltPuzzleBoardWidgetState extends State<AltPuzzleBoardWidget> {
         depth: 0.05 * contentSize.shortestSide,
         direction: ZDirection.backwards,
         layers: 10,
-        child: Container(
+        midChild: Container(
           child: Container(
             child: _boardTiles(
               screenSize: screenSize,
@@ -131,7 +131,7 @@ class _AltPuzzleBoardWidgetState extends State<AltPuzzleBoardWidget> {
                       borderRadius:
                           BorderRadius.circular(contentSize.shortestSide / 50),
                       child: PuzzleTileAnyWidget(
-                        tile.value,
+                        tile,
                         xTilt: 0,
                         yTilt: 0,
                         canvasRect: canvasRect,
@@ -153,7 +153,7 @@ class _AltPuzzleBoardWidgetState extends State<AltPuzzleBoardWidget> {
                           if (widget.puzzle.isTileMovable(tile)) {
                             // print("movable tile $tile");
                             setState(() {
-                              widget.puzzle.moveTiles(tile, []);
+                              widget.puzzle.moveTiles(tile);
                               // print("tile moved $tile");
                             });
                           }

@@ -106,6 +106,12 @@ class _SpaceWidgetState extends State<SpaceWidget2> {
     double percentInclinaisonY = (_mousePosition != null
         ? (_mousePosition!.dx - canvasRect.center.dx) / 5
         : 0.0);
+    return CustomPaint(
+        painter: _GalaxyPainter(
+            _movingStars,
+            _timeSpent,
+            Curves.linear.transform(cos(_timeSpent.toDouble()).abs()),
+            _mousePosition));
 
     return MouseRegion(
       child: CustomPaint(

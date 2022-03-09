@@ -1,0 +1,61 @@
+PODS:
+  - file_saver (0.0.1):
+    - FlutterMacOS
+  - FlutterMacOS (1.0.0)
+  - FMDB (2.7.5):
+    - FMDB/standard (= 2.7.5)
+  - FMDB/standard (2.7.5)
+  - leak_detector (0.0.1):
+    - FlutterMacOS
+  - path_provider_macos (0.0.1):
+    - FlutterMacOS
+  - share_plus_macos (0.0.1):
+    - FlutterMacOS
+  - sqflite (0.0.2):
+    - FlutterMacOS
+    - FMDB (>= 2.7.5)
+  - url_launcher_macos (0.0.1):
+    - FlutterMacOS
+
+DEPENDENCIES:
+  - file_saver (from `Flutter/ephemeral/.symlinks/plugins/file_saver/macos`)
+  - FlutterMacOS (from `Flutter/ephemeral`)
+  - leak_detector (from `Flutter/ephemeral/.symlinks/plugins/leak_detector/macos`)
+  - path_provider_macos (from `Flutter/ephemeral/.symlinks/plugins/path_provider_macos/macos`)
+  - share_plus_macos (from `Flutter/ephemeral/.symlinks/plugins/share_plus_macos/macos`)
+  - sqflite (from `Flutter/ephemeral/.symlinks/plugins/sqflite/macos`)
+  - url_launcher_macos (from `Flutter/ephemeral/.symlinks/plugins/url_launcher_macos/macos`)
+
+SPEC REPOS:
+  trunk:
+    - FMDB
+
+EXTERNAL SOURCES:
+  file_saver:
+    :path: Flutter/ephemeral/.symlinks/plugins/file_saver/macos
+  FlutterMacOS:
+    :path: Flutter/ephemeral
+  leak_detector:
+    :path: Flutter/ephemeral/.symlinks/plugins/leak_detector/macos
+  path_provider_macos:
+    :path: Flutter/ephemeral/.symlinks/plugins/path_provider_macos/macos
+  share_plus_macos:
+    :path: Flutter/ephemeral/.symlinks/plugins/share_plus_macos/macos
+  sqflite:
+    :path: Flutter/ephemeral/.symlinks/plugins/sqflite/macos
+  url_launcher_macos:
+    :path: Flutter/ephemeral/.symlinks/plugins/url_launcher_macos/macos
+
+SPEC CHECKSUMS:
+  file_saver: 44e6fbf666677faf097302460e214e977fdd977b
+  FlutterMacOS: 57701585bf7de1b3fc2bb61f6378d73bbdea8424
+  FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
+  leak_detector: 1879f859d21e71b3da8c67f0b12bc571dcd9ba36
+  path_provider_macos: 160cab0d5461f0c0e02995469a98f24bdb9a3f1f
+  share_plus_macos: 853ee48e7dce06b633998ca0735d482dd671ade4
+  sqflite: a5789cceda41d54d23f31d6de539d65bb14100ea
+  url_launcher_macos: 597e05b8e514239626bcf4a850fcf9ef5c856ec3
+
+PODFILE CHECKSUM: 6eac6b3292e5142cfc23bdeb71848a40ec51c14c
+
+COCOAPODS: 1.11.2

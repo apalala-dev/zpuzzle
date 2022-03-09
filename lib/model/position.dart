@@ -50,4 +50,8 @@ class Position extends Equatable implements Comparable<Position> {
       return false;
     }
   }
+
+  operator +(Position other) {
+    return Position(x: x + other.x, y: y + other.y);
+  }
 }
