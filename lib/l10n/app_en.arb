@@ -1,0 +1,51 @@
+{
+  "helloWorld": "Hello World!",
+  "@helloWorld": {
+    "description": "The conventional newborn programmer greeting"
+  },
+  "showLicenses": "Show Licenses",
+  "share": "Share",
+  "download": "Download",
+  "chooseDifficulty": "Choose your difficulty",
+  "pickABackground": "Pick a background",
+  "showHelp": "Show help",
+  "giveUpQuestion": "Give up?",
+  "no": "No",
+  "yes": "Yes",
+  "giveUp": "GIVE UP",
+  "pickNewBackground": "Pick a new background",
+  "cancel": "CANCEL",
+  "appName": "ZPuzzle",
+  "nbMoves": "{count,plural, =0{{count} Moves} other{{count} Moves}}",
+  "@nbMoves": {
+    "description": "Number of moves",
+    "placeholders": {
+      "count": {
+      }
+    }
+  },
+  "play": "PLAY",
+  "solve": "SOLVE",
+  "nbMovesSuffix": "{count,plural, =0{ Moves} other{ Moves}}",
+  "@nbMovesSuffix": {
+    "description": "Number of moves without the number for formatting purpose",
+    "placeholders": {
+      "count": {
+      }
+    }
+  },
+  "congrats": "Congrats!",
+  "puzzleChallengeCompleted": "ZPuzzle challenge completed.",
+  "score": "Score",
+  "shareScore": "Share your score!",
+  "shareScoreWithFriends": "Share your score on this puzzle with your friends and challenge them.",
+  "shareMessage": "I completed the ZPuzzle challenge with {nbMoves} moves in ⏳ {duration} ! https://play-zpuzzle.web.app",
+  "@shareMessage": {
+    "description": "The share message to send when you finish a game",
+    "placeholders": {
+      "nbMoves": {},
+      "duration": {}
+    }
+  },
+  "shareMessageSubject": "ZPuzzle challenge completed"
+}

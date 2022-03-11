@@ -31,7 +31,6 @@ class MovingStar {
     var newX = ((1 - t) * basePosition.dx + t * dest.dx);
     var newY = ((1 - t) * basePosition.dy + t * dest.dy);
     if (mousePosition == null || center == null) {
-      // return Offset(basePosition.dx, basePosition.dy);
       return Offset(newX, newY);
     } else {
       return Offset(
@@ -43,9 +42,6 @@ class MovingStar {
               (center.dy / distance) *
                   (center.dy - mousePosition.dy) /
                   center.dy);
-
-      return Offset(newX + 20 * (center.dx - mousePosition.dx) / center.dx,
-          newY + 20 * (center.dy - mousePosition.dy) / center.dy);
     }
   }
 
@@ -67,13 +63,6 @@ class MovingStar {
 
   static Offset offsetOutside(Rect canvasRect, int distance,
       {double? xBase, double? yBase, bool allowInside = false}) {
-    var biggerRect = Rect.fromCenter(
-        center: canvasRect.center,
-        width: canvasRect.width + distance,
-        height: canvasRect.height + distance);
-    var p = Path.combine(PathOperation.difference, Path()..addRect(biggerRect),
-        Path()..addRect(canvasRect));
-
     bool xBaseOutsideNeg = xBase != null && xBase < 0;
     bool xBaseOutsidePos = xBase != null && xBase > canvasRect.width;
     bool yBaseOutsideNeg = yBase != null && yBase < 0;

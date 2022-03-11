@@ -1,13 +1,14 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_color/flutter_color.dart';
 import 'package:slide_puzzle/model/puzzle.dart';
 import 'package:slide_puzzle/model/tile.dart';
-import 'package:slide_puzzle/ui/board-content.dart';
+import 'package:slide_puzzle/ui/board_content.dart';
+import 'package:slide_puzzle/ui/zwidget_wrapper.dart';
 import 'package:zwidget/zwidget.dart';
 
-import '../app-colors.dart';
+import '../app_colors.dart';
 
 class AnimatedBoardWidget extends AnimatedWidget {
   final Puzzle puzzle;
@@ -47,43 +48,22 @@ class AnimatedBoardWidget extends AnimatedWidget {
     final innerBoardSpacing = contentSize.shortestSide / 30;
 
     var xTilt = rotationXTween
-            // .chain(CurveTween(curve: Curves.elasticInOut))
-            // .chain(CurveTween(curve: Curves.easeOut))
-            // .chain(CurveTween(curve: Curves.easeInOut))
             .chain(CurveTween(curve: const ElasticOutCurve(0.4)))
             .evaluate(_animation) +
         (gyroEvent.dx * 2 * pi);
     var yTilt = rotationYTween
-            // .chain(CurveTween(curve: Curves.elasticInOut))
-            // .chain(CurveTween(curve: Curves.easeIn))
             .chain(CurveTween(curve: const ElasticOutCurve(0.4)))
             .evaluate(_animation) +
         (gyroEvent.dy * 2 * pi);
     final scale = scaleTween
-        // .chain(CurveTween(curve: Curves.elasticInOut))
         .chain(CurveTween(curve: Curves.linearToEaseOut))
         .evaluate(_animation);
 
-    // return Transform.scale(
-    //   child: BoardContent(
-    //       contentSize: contentSize,
-    //       puzzle: puzzle,
-    //       backgroundWidget: selectedTileWidget,
-    //       onTileMoved: onTileMoved,
-    //       xTilt: 0,
-    //       yTilt: 0),
-    //   scale: scale,
-    // );
-
-    // xTilt = pi/9;
-    // yTilt = -pi/9;
-
     return Transform.scale(
       scale: scale,
-      child: ZWidget(
+      child: ZWidgetWrapper(
         debug: false,
         rotationY: xTilt,
-        // xTilt,
         rotationX: yTilt,
         alignment: Alignment.center,
         perspective: 0.5,
@@ -94,31 +74,15 @@ class AnimatedBoardWidget extends AnimatedWidget {
         topChild: topChild ??
             Container(
               child: Container(
-                child: false
-                    ? ZWidget(
-                        midChild: Container(
-                          width: boardContentSize.width,
-                          height: boardContentSize.width,
-                          color: Colors.pink,
-                        ),
-                        topChild: Container(
-                          width: boardContentSize.width,
-                          height: boardContentSize.width,
-                          color: Colors.red,
-                        ),
-                        depth: 20,
-                        layers: 5,
-                        direction: ZDirection.forwards,
-                      )
-                    : BoardContent(
-                        puzzle: puzzle,
-                        contentSize: boardContentSize,
-                        backgroundWidget: selectedTileWidget,
-                        onTileMoved: onTileMoved,
-                        xTilt: 0,
-                        yTilt: 0,
-                        showIndicator: showIndicator,
-                      ),
+                child: BoardContent(
+                  puzzle: puzzle,
+                  contentSize: boardContentSize,
+                  backgroundWidget: selectedTileWidget,
+                  onTileMoved: onTileMoved,
+                  xTilt: xTilt,
+                  yTilt: yTilt,
+                  showIndicator: showIndicator,
+                ),
                 padding: EdgeInsets.all(innerBoardSpacing),
                 decoration: BoxDecoration(
                   color: AppColors.boardInnerColor(context), //Colors.white,
@@ -143,9 +107,27 @@ class AnimatedBoardWidget extends AnimatedWidget {
               padding: EdgeInsets.all(innerBoardSpacing),
               decoration: BoxDecoration(
                   color: AppColors.boardOuterColor(context),
-                  //HexColor("E0E0E0").withOpacity(0.5),
                   borderRadius:
-                      BorderRadius.circular(contentSize.shortestSide / 30)),
+                      BorderRadius.circular(contentSize.shortestSide / 30),
+                  boxShadow: kIsWeb
+                      ? [
+                          BoxShadow(
+                              color: AppColors.perspectiveColor,
+                              blurRadius: 0,
+                              spreadRadius: 0,
+                              offset: Offset(
+                                  -(xTilt < 0
+                                      ? max(xTilt * 0.05 * contentSize.shortestSide,
+                                          -contentSize.shortestSide / 30)
+                                      : min(xTilt * 0.05 * contentSize.shortestSide,
+                                      contentSize.shortestSide / 30)),
+                                  -(yTilt < 0
+                                      ? max(yTilt * 0.05 * contentSize.shortestSide,
+                                          -contentSize.shortestSide / 30)
+                                      : min(yTilt * 0.05 * contentSize.shortestSide,
+                                      contentSize.shortestSide / 30))))
+                        ]
+                      : null),
             ),
       ),
     );

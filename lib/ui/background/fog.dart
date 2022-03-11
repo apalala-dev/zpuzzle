@@ -1,16 +1,12 @@
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter_color/flutter_color.dart';
 import 'package:slide_puzzle/ui/background/fog_particle.dart';
 
-import '../../app-colors.dart';
+import '../../app_colors.dart';
 
-// https://flutterawesome.com/a-basic-particle-generator-sample-written-in-flutter/
-//
-// https://felixblaschke.github.io/sa3_liquid/#/
+// Inspired by https://felixblaschke.github.io/sa3_liquid/#/
 class Fog extends StatefulWidget {
   final Size contentSize;
 
@@ -26,7 +22,6 @@ class Fog extends StatefulWidget {
 }
 
 class _FogState extends State<Fog> with SingleTickerProviderStateMixin {
-  // late AnimationController _animationController;
   final List<FogParticle> _particles = [];
   late Ticker _ticker;
   final DateTime _startTime = DateTime.now();
@@ -37,12 +32,6 @@ class _FogState extends State<Fog> with SingleTickerProviderStateMixin {
     super.initState();
     _ticker = Ticker(_tick);
 
-    // _animationController = AnimationController(
-    //     vsync: this, duration: const Duration(milliseconds: 10000));
-    final canvasRect = Offset.zero & widget.contentSize;
-    // _animationController.addListener(() {
-    //
-    // });
     Random rand = Random();
     final particleStartTime = _startTime.add(Duration(
         milliseconds:
@@ -53,7 +42,6 @@ class _FogState extends State<Fog> with SingleTickerProviderStateMixin {
       );
     }
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-      // _animationController.repeat(reverse: true);
       _ticker.start();
     });
   }
@@ -71,7 +59,6 @@ class _FogState extends State<Fog> with SingleTickerProviderStateMixin {
 
   @override
   void dispose() {
-    // _animationController.dispose();
     _ticker.dispose();
     super.dispose();
   }
@@ -105,7 +92,6 @@ class _FogPainter extends CustomPainter {
     canvas.drawColor(Colors.black, BlendMode.src);
     for (var p in particles) {
       canvas.drawCircle(
-        // p.blobData.path!.shift(p.position(currentTime)),
         p.position(currentTime),
         p.size(currentTime),
         Paint()

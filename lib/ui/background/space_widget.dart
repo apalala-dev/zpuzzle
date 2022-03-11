@@ -1,30 +1,23 @@
 import 'dart:async';
 import 'dart:math';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_color/flutter_color.dart';
-import 'package:slide_puzzle/hover-effect.dart';
-import 'package:slide_puzzle/ui/background/moving-star.dart';
-import 'package:slide_puzzle/puzzle-board-widget.dart';
+import 'package:sensors_plus/sensors_plus.dart';
+import 'package:slide_puzzle/ui/background/moving_star.dart';
 import 'package:supercharged/supercharged.dart';
 import 'package:supercharged_dart/supercharged_dart.dart';
-import 'package:sensors_plus/sensors_plus.dart';
-import 'package:image/image.dart' as imglib;
 
-import '../../model/puzzle.dart';
-
-class SpaceWidget2 extends StatefulWidget {
-  const SpaceWidget2({Key? key, required this.title}) : super(key: key);
+class SpaceWidget extends StatefulWidget {
+  const SpaceWidget({Key? key, required this.title}) : super(key: key);
   final String title;
 
   @override
   State<StatefulWidget> createState() => _SpaceWidgetState();
 }
 
-class _SpaceWidgetState extends State<SpaceWidget2> {
+class _SpaceWidgetState extends State<SpaceWidget> {
   final List<MovingStar> _movingStars = [];
   Timer? refreshTimer;
   int _timeSpent = 0;
@@ -40,40 +33,14 @@ class _SpaceWidgetState extends State<SpaceWidget2> {
       print(
           "canvasRect - center: ${canvasRect.center} - w:${canvasRect.width}, h: ${canvasRect.height}");
       var rand = Random();
-
-      // for (int i = 0; i < 50; i++) {
-      //   _movingStars.add(MovingStar(
-      //     basePosition: MovingStar.offsetInCenter(canvasRect, canvasRect.width),
-      //     dest: MovingStar.offsetOutside(canvasRect, 200, allowInside: true),
-      //     size: max(2, rand.nextDouble() * 7),
-      //     color: Colors.white.withOpacity(max(rand.nextDouble() * 0.8, 0.5)),
-      //     timeToFinish: max(10000, (rand.nextDouble() * 5000).round()),
-      //     distance: rand.nextInt((canvasRect.size.shortestSide / 2).round()),
-      //   ));
-      // }
-
-      for (int i = 0; i < 25; i++) {
-        final startingSize = max(2.0, rand.nextDouble() * 7);
+      for (int i = 0; i < 50; i++) {
         _movingStars.add(MovingStar(
-          basePosition: MovingStar.offsetInCenter(canvasRect, 100),
-          dest: MovingStar.offsetOutside(canvasRect, 50, allowInside: true),
-          startingSize: startingSize,
-          endingSize: startingSize + rand.nextDouble() * 10,
+          basePosition:
+              MovingStar.offsetOutside(canvasRect, 200, allowInside: true),
+          dest: MovingStar.offsetOutside(canvasRect, 200, allowInside: true),
+          startingSize: max(2, rand.nextDouble() * 7),
           color: Colors.white.withOpacity(max(rand.nextDouble() * 0.8, 0.5)),
-          timeToFinish: 10000 + (rand.nextDouble() * 5000).round(),
-          distance: rand.nextInt((canvasRect.size.shortestSide / 2).round()),
-        ));
-      }
-
-      for (int i = 0; i < 25; i++) {
-        final startingSize = max(0.1, rand.nextDouble() * 7);
-        _movingStars.add(MovingStar(
-          basePosition: MovingStar.offsetInCenter(canvasRect, 100),
-          dest: MovingStar.offsetOutside(canvasRect, 50, allowInside: true),
-          startingSize: startingSize,
-          endingSize: startingSize + rand.nextDouble() * 10,
-          color: Colors.white.withOpacity(max(rand.nextDouble() * 0.8, 0.5)),
-          timeToFinish: 20000 + (rand.nextDouble() * 50000).round(),
+          timeToFinish: max(100000, (rand.nextDouble() * 500000).round()),
           distance: rand.nextInt((canvasRect.size.shortestSide / 2).round()),
         ));
       }
@@ -88,7 +55,7 @@ class _SpaceWidgetState extends State<SpaceWidget2> {
 
       gyroscopeEvents.listen((GyroscopeEvent event) {
         // print("gyro: ${event.x}, ${event.y}, ${event.z}");
-        // _mousePosition = Offset(event.x * 100, event.y * 100);
+        _mousePosition = Offset(event.x * 100, event.y * 100);
       });
       // _loadImage();
     });
@@ -106,12 +73,6 @@ class _SpaceWidgetState extends State<SpaceWidget2> {
     double percentInclinaisonY = (_mousePosition != null
         ? (_mousePosition!.dx - canvasRect.center.dx) / 5
         : 0.0);
-    return CustomPaint(
-        painter: _GalaxyPainter(
-            _movingStars,
-            _timeSpent,
-            Curves.linear.transform(cos(_timeSpent.toDouble()).abs()),
-            _mousePosition));
 
     return MouseRegion(
       child: CustomPaint(
@@ -123,7 +84,7 @@ class _SpaceWidgetState extends State<SpaceWidget2> {
       onHover: (event) {
         // print("hover ${event.position}");
         // setState(() {
-        // _mousePosition = event.position;
+        _mousePosition = event.position;
         // });
       },
     );
@@ -145,24 +106,22 @@ class _GalaxyPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    canvas.drawColor(const Color(0xFF0C1639), BlendMode.src);
+    canvas.drawColor(Colors.black, BlendMode.src);
     var canvasRect = Offset.zero & size;
     var biggerRect = Rect.fromCenter(
         center: canvasRect.center,
-        width: canvasRect.width + 50,
-        height: canvasRect.height + 50);
+        width: canvasRect.width + 200,
+        height: canvasRect.height + 200);
 
     if (movingStars.isNotEmpty) {
       Random rand = Random();
       for (var s in movingStars) {
-        final calculatedPosition = s.calculatedPosition(timeSpent,
+        var calculatedPosition = s.calculatedPosition(timeSpent,
             mousePosition: mousePosition, center: canvasRect.center);
-        final calculatedSize = s.size(timeSpent);
-        final calculatedColor = s.calculatedColor(timeSpent);
         if (biggerRect.contains(calculatedPosition)) {
           canvas.drawCircle(
             calculatedPosition,
-            calculatedSize,
+            s.startingSize,
             Paint()
               ..color = s.color
               ..shader = RadialGradient(
@@ -170,29 +129,17 @@ class _GalaxyPainter extends CustomPainter {
                       stops: const [0.8, 0.1])
                   .createShader(Rect.fromCenter(
                       center: calculatedPosition,
-                      width: calculatedSize,
-                      height: calculatedSize)),
+                      width: s.startingSize,
+                      height: s.startingSize)),
           );
         } else {
           // print("not in rect");
-          if (rand.nextDouble() > 0.3) {
-            s.recreateElsewhere(
-              canvasRect,
-              50,
-              timeSpent,
-              max(100000, (rand.nextDouble() * 500000).round()),
-            );
-          } else {
-            s.recreateElsewhere(
-              Rect.fromCenter(
-                  center: canvasRect.center, width: 100, height: 100),
-              50,
-              timeSpent,
-              max(100000, (rand.nextDouble() * 500000).round()),
-            );
-            s.startingSize = 0.1;
-            s.startingSize = s.startingSize + rand.nextDouble() * 10;
-          }
+          s.recreateElsewhere(
+            canvasRect,
+            200,
+            timeSpent,
+            max(100000, (rand.nextDouble() * 500000).round()),
+          );
           // print(
           //     "Recreated: ${s.basePosition} - calculated: ${s.calculatedPosition(timeSpent)}, in rect: ${canvasRect.contains(s.calculatedPosition(timeSpent))}");
         }

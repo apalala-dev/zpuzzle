@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_color/flutter_color.dart';
 import 'package:flutter_color/src/helper.dart';
 import 'package:rive/rive.dart';
+import 'package:slide_puzzle/ui/zwidget_wrapper.dart';
 import 'package:zwidget/zwidget.dart';
 
 class PuzzleRiveTileWidget extends StatefulWidget {
@@ -57,8 +58,11 @@ class _PuzzleTileWidgetState extends State<PuzzleRiveTileWidget> {
 
     if (widget.percentDepth > 0) {
       if (true) {
-        text = ZWidget(
+        text = ZWidgetWrapper(
           midChild: Text("${widget.index}",
+              style: TextStyle(
+                  fontSize: widget.tileSize / 2, color: Colors.white)),
+          topChild: Text("${widget.index}",
               style: TextStyle(
                   fontSize: widget.tileSize / 2, color: Colors.white)),
           midToTopChild: Text("${widget.index}",
@@ -174,21 +178,25 @@ class _PuzzleTileWidgetState extends State<PuzzleRiveTileWidget> {
 
     return Padding(
       child: InkWell(
-        child: ZWidget(
-            rotationY: widget.xTilt,
-            rotationX: widget.yTilt,
-            depth: 0.01 * widget.canvasRect.shortestSide,
-            direction: ZDirection.forwards,
-            layers: 20,
-            midToTopChild: Container(
-              width: widget.tileSize,
-              height: widget.tileSize,
-              decoration: BoxDecoration(
-                  color: Colors.black, borderRadius: BorderRadius.circular(0)),
-            ),
-            midChild: Center(
-              child: text,
-            )),
+        child: ZWidgetWrapper(
+          rotationY: widget.xTilt,
+          rotationX: widget.yTilt,
+          depth: 0.01 * widget.canvasRect.shortestSide,
+          direction: ZDirection.forwards,
+          layers: 20,
+          midToTopChild: Container(
+            width: widget.tileSize,
+            height: widget.tileSize,
+            decoration: BoxDecoration(
+                color: Colors.black, borderRadius: BorderRadius.circular(0)),
+          ),
+          midChild: Center(
+            child: text,
+          ),
+          topChild: Center(
+            child: text,
+          ),
+        ),
         onTap: widget.onTap,
       ),
       padding: EdgeInsets.all(widget.tileSpacing),

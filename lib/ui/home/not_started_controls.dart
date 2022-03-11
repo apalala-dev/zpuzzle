@@ -1,87 +1,78 @@
-// import 'package:flutter/cupertino.dart';
-//
-// class NotStartedControls extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     final space = SizedBox(height: size.height / 40);
-//     return Container(
-//       key: const ValueKey(2),
-//       decoration: BoxDecoration(
-//           color: Colors.white,
-//           borderRadius: BorderRadius.circular(size.shortestSide / 10)),
-//       child: Column(mainAxisSize: MainAxisSize.min, children: [
-//         space,
-//         Row(mainAxisSize: MainAxisSize.min, children: [
-//           Column(children: [
-//             SvgPicture.asset(
-//               AssetPath.zPuzzleIcon,
-//               color: Theme.of(context).textTheme.titleLarge?.color,
-//               width: size.shortestSide / 10,
-//               height: size.shortestSide / 10,
-//             ),
-//             SizedBox(
-//               height: size.shortestSide / 80,
-//             )
-//           ]),
-//           const SizedBox(
-//             width: 4,
-//           ),
-//           Text.rich(
-//               TextSpan(children: [
-//                 TextSpan(
-//                     text: 'P',
-//                     style: TextStyle(fontSize: size.shortestSide / 28)),
-//                 TextSpan(
-//                     text: 'UZZLE',
-//                     style: TextStyle(fontSize: size.shortestSide / 36)),
-//               ]),
-//               style: TextStyle(
-//                 fontWeight: FontWeight.bold,
-//                 color: Theme.of(context).textTheme.titleLarge?.color,
-//               ))
-//         ]),
-//         space,
-//         Text(
-//           'Choose your difficulty',
-//           style: TextStyle(fontSize: size.shortestSide / 34),
-//         ),
-//         SizedBox(height: size.height / 80),
-//         SizedBox(
-//           child: SizePicker(onSizePicked: (size) {
-//             _puzzleSize = size;
-//           }),
-//           height: size.height / 12,
-//         ),
-//         space,
-//         Text('Pick a background',
-//             style: TextStyle(fontSize: size.shortestSide / 34)),
-//         SizedBox(height: size.height / 80),
-//         SizedBox(
-//           child: Padding(
-//             child: BackgroundWidgetPicker(onBackgroundPicked: (selectedWidget) {
-//               setState(() {
-//                 _selectedWidget = selectedWidget;
-//                 print("selectedWidget not null");
-//               });
-//             }),
-//             padding: const EdgeInsets.symmetric(horizontal: 8),
-//           ),
-//           height: size.shortestSide / 8 * 3,
-//           width: (size.shortestSide / 8) * 5,
-//         ),
-//         space,
-//         ElevatedButton.icon(
-//             icon: const Icon(Icons.play_arrow),
-//             style: ElevatedButton.styleFrom(
-//                 shape: RoundedRectangleBorder(
-//                     borderRadius: BorderRadius.circular(64))),
-//             onPressed: () {
-//               _initPuzzle(puzzleOnly: true);
-//               _settingsController!.reverse();
-//             },
-//             label: const Text("START")),
-//         space,
-//       ]),
-//     );
-//   }
-// }
+import 'dart:math';
+import 'dart:ui';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:slide_puzzle/app_colors.dart';
+import 'package:slide_puzzle/ui/zpuzzle_title.dart';
+
+import '../settings/background_widget_picker.dart';
+import '../settings/size_picker.dart';
+
+class NotStartedControls extends StatelessWidget {
+  final Size size;
+  final Function(int) onPuzzleSizePicked;
+  final Function(Widget) onWidgetPicked;
+  final VoidCallback onStart;
+
+  const NotStartedControls({
+    Key? key,
+    required this.size,
+    required this.onPuzzleSizePicked,
+    required this.onWidgetPicked,
+    required this.onStart,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final space = SizedBox(height: size.height / 40);
+    return BackdropFilter(
+        filter:  ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+    child: Container(
+      key: const ValueKey(2),
+      decoration: BoxDecoration(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? AppColors.boardOuterColor(context).withOpacity(0.3)
+              : AppColors.boardInnerColor(context).withOpacity(0.3),
+          borderRadius: BorderRadius.circular(size.shortestSide / 10)),
+      child: Column(mainAxisSize: MainAxisSize.min, children: [
+        space,
+        const ZPuzzleTitle(
+          sizeMultiplier: 3,
+          maxSize: 48,
+        ),
+        space,
+        Text(
+          AppLocalizations.of(context)!.chooseDifficulty,
+          style: TextStyle(fontSize: min(size.shortestSide / 24, 20)),
+        ),
+        SizedBox(height: size.height / 80),
+        SizedBox(
+          child: SizePicker(onSizePicked: onPuzzleSizePicked),
+          height: size.height / 12,
+        ),
+        space,
+        Text(AppLocalizations.of(context)!.pickABackground,
+            style: TextStyle(fontSize: min(size.shortestSide / 24, 20))),
+        SizedBox(height: size.height / 80),
+        SizedBox(
+          child: Padding(
+            child: BackgroundWidgetPicker(onBackgroundPicked: onWidgetPicked),
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+          ),
+          height: size.shortestSide / 8 ,
+          width: (size.width / 8) * 7,
+        ),
+        space,
+        ElevatedButton.icon(
+            icon: const Icon(Icons.play_arrow),
+            style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(64))),
+            onPressed: onStart,
+            label: Text(AppLocalizations.of(context)!.play)),
+        space,
+      ]),
+    ));
+  }
+}

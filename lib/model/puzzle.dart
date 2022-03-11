@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:math';
 
 import 'package:equatable/equatable.dart';
@@ -36,9 +35,7 @@ import 'package:slide_puzzle/model/tile.dart';
 class Puzzle extends Equatable {
   /// {@macro puzzle}f
   Puzzle({required this.tiles, List<Position>? history})
-      : history = history ?? [] {
-    _nbMovesSink = _nbMovesSteamController.sink;
-  }
+      : history = history ?? [];
 
   static Puzzle generate(int size, {bool shuffle = true}) {
     /// Build a randomized, solvable puzzle of the given size.
@@ -121,13 +118,7 @@ class Puzzle extends Equatable {
   /// List of [Tile]s representing the puzzle's current arrangement.
   final List<Tile> tiles;
 
-  List<Position> history = [];
-
-  int _nbMoves = 0;
-  final StreamController<int> _nbMovesSteamController = StreamController<int>();
-
-  Stream<int> get nbMovesStream => _nbMovesSteamController.stream;
-  late Sink<int> _nbMovesSink;
+  final List<Position> history;
 
   Puzzle clone() {
     return Puzzle(tiles: [...tiles], history: [...history]);
@@ -293,9 +284,6 @@ class Puzzle extends Equatable {
   // Recursively stores a list of all tiles that need to be moved and passes the
   // list to _swapTiles to individually swap them.
   Puzzle _moveTiles(Tile tile, List<Tile> tilesToSwap) {
-    if (tilesToSwap.isEmpty) {
-      _nbMovesSink.add(++_nbMoves);
-    }
     final whitespaceTile = getWhitespaceTile();
     final deltaX = whitespaceTile.currentPosition.x - tile.currentPosition.x;
     final deltaY = whitespaceTile.currentPosition.y - tile.currentPosition.y;

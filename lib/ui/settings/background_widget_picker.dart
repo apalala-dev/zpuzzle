@@ -12,9 +12,14 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:mime/mime.dart';
 import 'package:rive/rive.dart' as rive;
+import 'package:slide_puzzle/asset_path.dart';
 import 'package:slide_puzzle/rive/rive-animation-bytes.dart';
 import 'package:image_size_getter/image_size_getter.dart' as imgSizeGetter;
+import 'package:slide_puzzle/ui/fit_or_scale_widget.dart';
+import 'package:slide_puzzle/ui/zwidget_wrapper.dart';
 import 'package:zwidget/zwidget.dart';
+
+import '../pickable_widgets/basic_app.dart';
 
 class BackgroundWidgetPicker extends StatefulWidget {
   final Function(Widget) onBackgroundPicked;
@@ -74,7 +79,7 @@ class _BackgroundWidgetPickerState extends State<BackgroundWidgetPicker>
     Container(
       key: const ValueKey('zDashatar'),
       child: const Center(
-        child: ZWidget(
+        child: ZWidgetWrapper(
           midChild: Image(
               image: AssetImage('assets/img/dashatar_1.png'),
               fit: BoxFit.cover),
@@ -82,6 +87,10 @@ class _BackgroundWidgetPickerState extends State<BackgroundWidgetPicker>
           depth: 10,
           rotationX: 0,
           rotationY: -pi / 4,
+          direction: ZDirection.forwards,
+          topChild: Image(
+              image: AssetImage('assets/img/dashatar_1.png'),
+              fit: BoxFit.cover),
         ),
       ),
       decoration: const BoxDecoration(
@@ -137,6 +146,15 @@ class _BackgroundWidgetPickerState extends State<BackgroundWidgetPicker>
       showDigitalClock: false,
       // datetime: DateTime(2019, 1, 1, 9, 12, 15),
     ),
+    const FitOrScaleWidget(
+      key: ValueKey('basicAppKey'),
+      minWidth: 200,
+      minHeight: 200,
+      child: AbsorbPointer(
+        child: BasicApp(),
+        absorbing: true,
+      ),
+    )
   ];
   int _selectedBackground = 0;
   PlatformFile? _pickedFile;
@@ -215,121 +233,128 @@ class _BackgroundWidgetPickerState extends State<BackgroundWidgetPicker>
                 final isFilePicker = idx == _backgrounds.length;
                 Widget child;
                 if (isFilePicker) {
-                  child = const Icon(Icons.image);
+                  child = Padding(
+                    child: SvgPicture.asset(AssetPath.pickImage),
+                    padding: EdgeInsets.all(constraints.maxWidth / 40),
+                  );
                 } else {
                   child = _backgrounds[idx];
                 }
 
-                return InkWell(
+                return Material(
                   borderRadius: BorderRadius.circular(8),
-                  child: AspectRatio(
-                    aspectRatio: 1,
-                    child: AnimatedBuilder(
-                      animation: _anims[idx]!,
-                      child: ClipRRect(
-                        child: child,
-                        borderRadius: BorderRadius.circular(8),
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(8),
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: AnimatedBuilder(
+                        animation: _anims[idx]!,
+                        child: ClipRRect(
+                          child: child,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        builder: (BuildContext context, Widget? child) {
+                          return Transform.rotate(
+                            child: Transform.scale(
+                                scale: _anims[idx]!.value, child: child),
+                            angle: 4 * pi * _anims[idx]!.value / 0.4,
+                          );
+                        },
                       ),
-                      builder: (BuildContext context, Widget? child) {
-                        return Transform.rotate(
-                          child: Transform.scale(
-                              scale: _anims[idx]!.value, child: child),
-                          angle: 4 * pi * _anims[idx]!.value / 0.4,
-                        );
-                      },
                     ),
-                  ),
-                  onTap: () async {
-                    if (isFilePicker) {
-                      try {
-                        var _paths = (await FilePicker.platform.pickFiles(
-                          type: FileType.custom,
-                          withData: kIsWeb ||
-                              !(Platform.isLinux ||
-                                  Platform.isWindows ||
-                                  Platform.isMacOS),
-                          allowMultiple: false,
-                          allowedExtensions: [
-                            'jpg',
-                            'jpeg',
-                            'png',
-                            'gif',
-                            'bmp',
-                            'svg',
-                            // 'riv' // Disabled for now
-                          ],
-                          onFileLoading: (FilePickerStatus status) =>
-                              print(status),
-                        ))
-                            ?.files;
-                        String? mimeType;
-                        if (_paths?.isNotEmpty == true) {
-                          setState(() {
-                            final tmp = _paths!.first;
+                    onTap: () async {
+                      if (isFilePicker) {
+                        try {
+                          var _paths = (await FilePicker.platform.pickFiles(
+                            type: FileType.custom,
+                            withData: kIsWeb ||
+                                !(Platform.isLinux ||
+                                    Platform.isWindows ||
+                                    Platform.isMacOS),
+                            allowMultiple: false,
+                            allowedExtensions: [
+                              'jpg',
+                              'jpeg',
+                              'png',
+                              'gif',
+                              'bmp',
+                              'svg',
+                              // 'riv' // Disabled for now
+                            ],
+                            onFileLoading: (FilePickerStatus status) =>
+                                print(status),
+                          ))
+                              ?.files;
+                          String? mimeType;
+                          if (_paths?.isNotEmpty == true) {
+                            setState(() {
+                              final tmp = _paths!.first;
 
-                            if (tmp.extension == 'svg') {
-                              _pickedFile = tmp;
-                              _backgrounds.add(SvgPicture.memory(
-                                _pickedFile!.bytes!,
-                                fit: BoxFit.cover,
-                              ));
-                            } else if (false && tmp.extension == 'riv') {
-                              _pickedFile = tmp;
-                              final rivFile = rive.RiveFile.import(
-                                  ByteData.sublistView(_pickedFile!.bytes!));
-                              _backgrounds.add(RiveAnimationBytes.bytes(
-                                ByteData.sublistView(_pickedFile!.bytes!),
-                                fit: BoxFit.cover,
-                                // controllers: [widget.riveAnimationController],
-                              ));
-                            } else {
-                              if (kIsWeb) {
-                                mimeType = 'image/any';
-                              } else {
-                                mimeType = lookupMimeType(tmp.path!);
-                              }
-                              print("mimetype: $mimeType");
-                              if (mimeType != null) {
-                                final fileType = mimeType!.split('/');
-                                final type = fileType[0];
+                              if (tmp.extension == 'svg') {
                                 _pickedFile = tmp;
-                                if (type == 'image') {
-                                  // test to add the option withdata to see if it works better
-                                  _backgrounds.add(Image(
-                                    image: (kIsWeb ||
-                                            !(Platform.isLinux ||
-                                                Platform.isWindows ||
-                                                Platform.isMacOS))
-                                        ? MemoryImage(_pickedFile!.bytes!)
-                                        : FileImage(File(_pickedFile!.path!))
-                                            as ImageProvider,
-                                    fit: BoxFit.cover,
-                                  ));
+                                _backgrounds.add(SvgPicture.memory(
+                                  _pickedFile!.bytes!,
+                                  fit: BoxFit.cover,
+                                ));
+                              } else if (false && tmp.extension == 'riv') {
+                                _pickedFile = tmp;
+                                final rivFile = rive.RiveFile.import(
+                                    ByteData.sublistView(_pickedFile!.bytes!));
+                                _backgrounds.add(RiveAnimationBytes.bytes(
+                                  ByteData.sublistView(_pickedFile!.bytes!),
+                                  fit: BoxFit.cover,
+                                  // controllers: [widget.riveAnimationController],
+                                ));
+                              } else {
+                                if (kIsWeb) {
+                                  mimeType = 'image/any';
+                                } else {
+                                  mimeType = lookupMimeType(tmp.path!);
+                                }
+                                print("mimetype: $mimeType");
+                                if (mimeType != null) {
+                                  final fileType = mimeType!.split('/');
+                                  final type = fileType[0];
+                                  _pickedFile = tmp;
+                                  if (type == 'image') {
+                                    // test to add the option withdata to see if it works better
+                                    _backgrounds.add(Image(
+                                      image: (kIsWeb ||
+                                              !(Platform.isLinux ||
+                                                  Platform.isWindows ||
+                                                  Platform.isMacOS))
+                                          ? MemoryImage(_pickedFile!.bytes!)
+                                          : FileImage(File(_pickedFile!.path!))
+                                              as ImageProvider,
+                                      fit: BoxFit.cover,
+                                    ));
+                                  }
                                 }
                               }
+                            });
+                            if (mimeType != null) {
+                              _animateSelection(
+                                  _selectedBackground, _backgrounds.length - 1);
+                              widget.onBackgroundPicked(
+                                  _backgrounds[_backgrounds.length - 1]);
                             }
-                          });
-                          if (mimeType != null) {
-                            _animateSelection(
-                                _selectedBackground, _backgrounds.length - 1);
-                            widget.onBackgroundPicked(
-                                _backgrounds[_backgrounds.length - 1]);
                           }
+                        } on PlatformException catch (e) {
+                          print(e);
+                        } catch (e) {
+                          print(e);
                         }
-                      } on PlatformException catch (e) {
-                        print(e);
-                      } catch (e) {
-                        print(e);
+                      } else {
+                        if (_selectedBackground != idx) {
+                          _animateSelection(_selectedBackground, idx);
+                          widget.onBackgroundPicked(child);
+                          // onBackgroundPicked();
+                        }
                       }
-                    } else {
-                      if (_selectedBackground != idx) {
-                        _animateSelection(_selectedBackground, idx);
-                        widget.onBackgroundPicked(child);
-                        // onBackgroundPicked();
-                      }
-                    }
-                    // widget.onBackgroundPicked(_dimensions[idx]);
-                  },
+                      // widget.onBackgroundPicked(_dimensions[idx]);
+                    },
+                  ),
                 );
               }),
         ),

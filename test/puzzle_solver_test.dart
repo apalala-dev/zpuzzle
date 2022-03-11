@@ -1,8 +1,6 @@
-import 'dart:math';
-
 import 'package:slide_puzzle/model/position.dart';
-import 'package:slide_puzzle/model/puzzle-solver.dart';
 import 'package:slide_puzzle/model/puzzle.dart';
+import 'package:slide_puzzle/model/puzzle_solver.dart';
 import 'package:slide_puzzle/model/tile.dart';
 import 'package:test/test.dart';
 
@@ -156,8 +154,6 @@ void main() {
         lockedTiles.add(toMove);
       }
     }
-
-    print("izokah");
   });
 
   test("Shortest path test", () {
@@ -305,6 +301,6 @@ void main() {
     var str = puzzle.toVisualString();
     print(str);
 
-    assert(str.length > 0);
+    assert(str.isNotEmpty);
   });
 }

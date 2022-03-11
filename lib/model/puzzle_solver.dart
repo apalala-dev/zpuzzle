@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:slide_puzzle/model/position.dart';
 import 'package:slide_puzzle/model/puzzle.dart';
 import 'package:slide_puzzle/model/tile.dart';

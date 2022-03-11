@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:slide_puzzle/asset-path.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:slide_puzzle/asset_path.dart';
 import 'package:slide_puzzle/utils.dart';
 
 class TimerWidget extends StatefulWidget {
@@ -49,10 +51,11 @@ class TimerWidgetState extends State // with SingleTickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
+    // return const SizedBox();
     return Text(
       _totalTime.toDisplayableString(),
-      style: TextStyle(
-          fontSize: MediaQuery.of(context).size.shortestSide / 34,
+      style: GoogleFonts.robotoMono(
+          fontSize: min(MediaQuery.of(context).size.shortestSide / 26, 18),
           fontWeight: FontWeight.bold),
     );
   }

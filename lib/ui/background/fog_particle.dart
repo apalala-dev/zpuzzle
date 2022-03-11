@@ -22,17 +22,17 @@ class FogParticle {
 
   FogParticle.random(Random rand, DateTime startTime, Size size)
       : duration = Duration(
-    milliseconds: (rand.nextDouble() *
-        (maxParticleDuration - minParticleDuration)
-            .inMilliseconds +
-        minParticleDuration.inMilliseconds)
-        .round(),
-  ),
+          milliseconds: (rand.nextDouble() *
+                      (maxParticleDuration - minParticleDuration)
+                          .inMilliseconds +
+                  minParticleDuration.inMilliseconds)
+              .round(),
+        ),
         startTime = startTime.add(
           Duration(
               milliseconds:
-              (rand.nextDouble() * maxParticleDuration.inMilliseconds / 2)
-                  .round()),
+                  (rand.nextDouble() * maxParticleDuration.inMilliseconds / 2)
+                      .round()),
         ),
         tweenPosition = Tween<Offset>(
             begin: FogParticle.offsetOutside(size, size.shortestSide * 0.25),
@@ -51,12 +51,8 @@ class FogParticle {
     p.lineTo(laterPos.dx, laterPos.dy);
     p.close();
     final intersect =
-    Path.combine(PathOperation.intersect, p, Path()
-      ..addRect(canvasRect));
-    return !intersect
-        .getBounds()
-        .size
-        .isEmpty;
+        Path.combine(PathOperation.intersect, p, Path()..addRect(canvasRect));
+    return !intersect.getBounds().size.isEmpty;
   }
 
   static Offset offsetOutside(Size size, double distance,
@@ -80,49 +76,6 @@ class FogParticle {
           rand.nextDouble() * (canvasRect.height + 4 * distance) - 2 * distance;
     } while (biggerRect.contains(Offset(biggerRect.center.dx, newY)));
 
-    return Offset(newX, newY);
-  }
-
-  static Offset offsetOutsideOld(Size size, double distance,
-      {double? xBase, double? yBase, bool allowInside = false}) {
-    final canvasRect = Offset.zero & size;
-    var biggerRect = Rect.fromCenter(
-        center: canvasRect.center,
-        width: canvasRect.width + distance,
-        height: canvasRect.height + distance);
-    var p = Path.combine(PathOperation.difference, Path()
-      ..addRect(biggerRect),
-        Path()
-          ..addRect(canvasRect));
-
-    bool xBaseOutsideNeg = xBase != null && xBase < 0;
-    bool xBaseOutsidePos = xBase != null && xBase > canvasRect.width;
-    bool yBaseOutsideNeg = yBase != null && yBase < 0;
-    bool yBaseOutsidePos = yBase != null && yBase > canvasRect.height;
-
-    Random rand = Random();
-    double newX;
-    do {
-      newX = rand.nextDouble() * (canvasRect.width + 2 * distance) - distance;
-    } while (xBaseOutsideNeg && newX < 0 ||
-        xBaseOutsidePos && newX > canvasRect.width);
-
-    double newY;
-    if (canvasRect.contains(Offset(newX, canvasRect.center.dy))) {
-      // Only allow y outside of the canvasRect
-      do {
-        newY =
-            rand.nextDouble() * (canvasRect.height + 2 * distance) - distance;
-      } while (yBaseOutsideNeg && newY < 0 ||
-          yBaseOutsidePos && newY > canvasRect.height ||
-          (!allowInside && canvasRect.contains(Offset(newX, newY))));
-    } else {
-      do {
-        newY =
-            rand.nextDouble() * (canvasRect.height + 2 * distance) - distance;
-      } while (yBaseOutsideNeg && newY < 0 ||
-          yBaseOutsidePos && newY > canvasRect.height);
-    }
     return Offset(newX, newY);
   }
 
