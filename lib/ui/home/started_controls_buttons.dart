@@ -15,7 +15,7 @@ class StartedControlsButtons extends AnimatedWidget {
   final VoidCallback stoppedSolving;
   final bool gyroEnabled;
   final VoidCallback gyroChanged;
-  final VoidCallback changeTheme;
+  final Function(Brightness) changeTheme;
 
   const StartedControlsButtons({
     Key? key,
@@ -55,7 +55,7 @@ class StartedControlsButtons extends AnimatedWidget {
                             ),
                             padding: EdgeInsets.all(size.shortestSide / 50)),
                         onTap: () {
-                          changeTheme();
+                          changeTheme(Theme.of(context).brightness);
                         },
                       ),
                       color: Colors.transparent,

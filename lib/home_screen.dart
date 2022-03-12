@@ -26,7 +26,7 @@ import 'model/puzzle.dart';
 import 'ui/home/started_controls_buttons.dart';
 
 class HomeScreen extends StatefulWidget {
-  final VoidCallback changeTheme;
+  final Function(Brightness) changeTheme;
 
   const HomeScreen({Key? key, required this.changeTheme}) : super(key: key);
 
@@ -51,10 +51,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   bool _showIndicator = true;
 
   bool _solving = false;
-  Widget _selectedWidget = const Image(
-    image: AssetImage('assets/img/moon.png'),
-    fit: BoxFit.cover,
-  );
+  Widget _selectedWidget =
+      const Image(image: AssetImage(AssetPath.img05), fit: BoxFit.cover);
   late Puzzle _puzzle;
   int _puzzleSize = 3;
 
@@ -214,7 +212,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                                         size.shortestSide /
                                                             50)),
                                                 onTap: () {
-                                                  widget.changeTheme();
+                                                  widget.changeTheme(
+                                                      Theme.of(context)
+                                                          .brightness);
                                                 },
                                               ),
                                               color: Colors.transparent,

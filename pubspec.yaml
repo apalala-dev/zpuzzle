@@ -44,6 +44,8 @@ dependencies:
   screenshot: ^1.2.3
   share_plus: ^3.1.0
   sensors_plus: ^1.2.1
+  url_strategy: ^0.2.0
+
 
   zwidget:
     path: ../zwidget
@@ -51,10 +53,7 @@ dependencies:
 dev_dependencies:
   test: ^1.20.1
   flutter_launcher_icons_maker: "^0.10.1"
-  flutter_app_name: ^0.1.0
 
-flutter_app_name:
-  name: "ZPuzzle"
 flutter_icons:
   android: true
   ios: true

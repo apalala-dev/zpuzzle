@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_color/flutter_color.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:latlong2/latlong.dart';
@@ -48,84 +49,59 @@ class _BackgroundWidgetPickerState extends State<BackgroundWidgetPicker>
   final custom = "custom";
   final picker = "picker";
   final List<Widget> _backgrounds = [
-    const Image(
-        image: AssetImage('assets/img/dashatar_1.png'), fit: BoxFit.cover),
-    const Image(
-        image: AssetImage('assets/img/dashonaute_1.png'), fit: BoxFit.cover),
-    AbsorbPointer(
-      key: const ValueKey('zMap'),
-      child: FlutterMap(
-        options: MapOptions(
-          center: LatLng(48.858370, 2.294481),
-          zoom: 13.0,
-          interactiveFlags: InteractiveFlag.none,
-        ),
-        layers: [
-          TileLayerOptions(
-            tileProvider: !kIsWeb &&
-                    (Platform.isLinux || Platform.isWindows || Platform.isMacOS)
-                ? NetworkTileProvider()
-                : const NonCachingNetworkTileProvider(),
-            urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-            subdomains: ['a', 'b', 'c'],
-            // attributionBuilder: (_) {
-            //   return const Text("© OpenStreetMap contributors");
-            // },
+    // const Image(image: AssetImage(AssetPath.dashatar), fit: BoxFit.cover),
+    if (!kIsWeb)
+      Container(
+        key: const ValueKey('zFlutter'),
+        child: Center(
+          child: ZWidgetWrapper(
+            midChild: SvgPicture.asset(
+              AssetPath.flutter,
+              color: Colors.black87,
+            ),
+            midToBotChild: SvgPicture.asset(
+              AssetPath.flutter,
+              color: Colors.blueGrey,
+            ),
+            layers: 21,
+            depth: 30,
+            alignment: Alignment.center,
+            rotationX: -pi / 3,
+            rotationY: 0,
+            direction: ZDirection.both,
+            topChild: SvgPicture.asset(AssetPath.flutter),
           ),
-        ],
-      ),
-    ),
-    Container(
-      key: const ValueKey('zDashatar'),
-      child: const Center(
-        child: ZWidgetWrapper(
-          midChild: Image(
-              image: AssetImage('assets/img/dashatar_1.png'),
-              fit: BoxFit.cover),
-          layers: 5,
-          depth: 10,
-          rotationX: 0,
-          rotationY: -pi / 4,
-          direction: ZDirection.forwards,
-          topChild: Image(
-              image: AssetImage('assets/img/dashatar_1.png'),
-              fit: BoxFit.cover),
         ),
+        decoration: const BoxDecoration(
+            gradient: LinearGradient(
+                colors: [Colors.black, Colors.white],
+                begin: Alignment.bottomRight,
+                end: Alignment.topLeft)),
       ),
-      decoration: const BoxDecoration(
-          gradient: LinearGradient(colors: [Colors.white, Colors.black54])),
-    ),
-    Container(
-      key: const ValueKey('zIcon'),
-      child: Center(
-        child: LayoutBuilder(
-            builder: (ctx, constraints) => ZWidget(
-                  midChild: Icon(
-                    Icons.star,
-                    color: Colors.grey,
-                    size:
-                        min(constraints.maxWidth, constraints.maxHeight) * 0.85,
-                  ),
-                  topChild: Icon(
-                    Icons.star,
-                    color: Colors.black,
-                    size:
-                        min(constraints.maxWidth, constraints.maxHeight) * 0.85,
-                  ),
-                  layers:
-                      (min(constraints.maxWidth, constraints.maxHeight) * 0.05)
-                          .round(),
-                  depth: min(constraints.maxWidth, constraints.maxHeight) * 0.1,
-                  perspective: 0.5,
-                  direction: ZDirection.forwards,
-                  rotationX: pi / 9,
-                  rotationY: -pi / 5,
-                )),
+    if (!kIsWeb)
+      Container(
+        key: const ValueKey('zDashatar'),
+        child: const Center(
+          child: ZWidgetWrapper(
+            midChild:
+                Image(image: AssetImage(AssetPath.dashatar), fit: BoxFit.cover),
+            layers: 5,
+            depth: 10,
+            rotationX: 0,
+            rotationY: -pi / 4,
+            direction: ZDirection.forwards,
+            topChild:
+                Image(image: AssetImage(AssetPath.dashatar), fit: BoxFit.cover),
+          ),
+        ),
+        decoration: const BoxDecoration(
+            gradient: LinearGradient(
+                colors: [Colors.lime, Colors.greenAccent],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight)),
       ),
-      decoration: const BoxDecoration(
-        gradient: RadialGradient(colors: [Colors.white, Colors.amber]),
-      ),
-    ),
+    const Image(image: AssetImage(AssetPath.img01), fit: BoxFit.cover),
+    const Image(image: AssetImage(AssetPath.img02), fit: BoxFit.cover),
     AnalogClock(
       key: const ValueKey('clockKey'),
       decoration: BoxDecoration(
@@ -154,13 +130,115 @@ class _BackgroundWidgetPickerState extends State<BackgroundWidgetPicker>
         absorbing: true,
       ),
     ),
+    const Image(image: AssetImage(AssetPath.img03), fit: BoxFit.cover),
+    const Image(image: AssetImage(AssetPath.img04), fit: BoxFit.cover),
+    AbsorbPointer(
+      key: const ValueKey('zMap'),
+      child: FlutterMap(
+        options: MapOptions(
+          center: LatLng(48.858370, 2.294481),
+          zoom: 13.0,
+          interactiveFlags: InteractiveFlag.none,
+        ),
+        layers: [
+          TileLayerOptions(
+            tileProvider: !kIsWeb &&
+                    (Platform.isLinux || Platform.isWindows || Platform.isMacOS)
+                ? NetworkTileProvider()
+                : const NonCachingNetworkTileProvider(),
+            urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            subdomains: ['a', 'b', 'c'],
+            // attributionBuilder: (_) {
+            //   return const Text("© OpenStreetMap contributors");
+            // },
+          ),
+        ],
+      ),
+    ),
+    const Image(image: AssetImage(AssetPath.img06), fit: BoxFit.cover),
+    Container(
+      key: const ValueKey('zGirlStudent'),
+      child: const Center(
+        child: ZWidgetWrapper(
+          midChild: Image(
+              image: AssetImage(AssetPath.girlGraduationStudent),
+              color: Colors.black,
+              fit: BoxFit.cover),
+          layers: 7,
+          depth: 15,
+          rotationX: 0,
+          rotationY: pi / 4,
+          direction: ZDirection.forwards,
+          topChild: Image(
+              image: AssetImage(AssetPath.girlGraduationStudent),
+              fit: BoxFit.cover),
+        ),
+      ),
+      decoration: const BoxDecoration(
+          gradient: LinearGradient(colors: [Colors.white, Colors.black54])),
+    ),
+    Container(
+      key: const ValueKey('zStudentGraduationDance'),
+      child: const Center(
+        child: ZWidgetWrapper(
+          midChild: Image(
+              image: AssetImage(AssetPath.studentGraduationDance),
+              color: Colors.black,
+              fit: BoxFit.cover),
+          layers: 7,
+          depth: 15,
+          rotationX: pi / 9,
+          rotationY: pi / 6,
+          direction: ZDirection.forwards,
+          topChild: Image(
+              image: AssetImage(AssetPath.studentGraduationDance),
+              fit: BoxFit.cover),
+        ),
+      ),
+      decoration: const BoxDecoration(
+          gradient: LinearGradient(colors: [Colors.white, Colors.black54])),
+    ),
+    if (!kIsWeb)
+      Container(
+        key: const ValueKey('zIcon'),
+        child: Center(
+          child: LayoutBuilder(
+              builder: (ctx, constraints) => ZWidgetWrapper(
+                    midChild: Icon(
+                      Icons.star,
+                      color: Colors.grey,
+                      size: min(constraints.maxWidth, constraints.maxHeight) *
+                          0.85,
+                    ),
+                    topChild: Icon(
+                      Icons.star,
+                      color: Colors.black,
+                      size: min(constraints.maxWidth, constraints.maxHeight) *
+                          0.85,
+                    ),
+                    layers: (min(constraints.maxWidth, constraints.maxHeight) *
+                            0.05)
+                        .round(),
+                    depth:
+                        min(constraints.maxWidth, constraints.maxHeight) * 0.1,
+                    perspective: 0.5,
+                    direction: ZDirection.forwards,
+                    rotationX: pi / 9,
+                    rotationY: -pi / 5,
+                  )),
+        ),
+        decoration: const BoxDecoration(
+          gradient: RadialGradient(colors: [Colors.white, Colors.amber]),
+        ),
+      ),
+    const Image(image: AssetImage(AssetPath.dashonaut), fit: BoxFit.cover),
     if (false)
       FitOrScaleWidget(
         key: const ValueKey('homeScreenKey'),
         minWidth: 600,
         minHeight: 400,
         child: AbsorbPointer(
-          child: HomeScreen(changeTheme: () {}),
+          child: HomeScreen(changeTheme: (_) {}),
           absorbing: true,
         ),
       )
@@ -359,9 +437,13 @@ class _BackgroundWidgetPickerState extends State<BackgroundWidgetPicker>
                             }
                           }
                         } on PlatformException catch (e) {
-                          print(e);
+                          if (kDebugMode) {
+                            print(e);
+                          }
                         } catch (e) {
-                          print(e);
+                          if (kDebugMode) {
+                            print(e);
+                          }
                         }
                       } else {
                         if (_selectedBackground != index) {

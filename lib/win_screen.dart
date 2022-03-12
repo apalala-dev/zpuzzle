@@ -20,7 +20,7 @@ class WinScreen extends StatefulWidget {
   final Puzzle puzzle;
   final Duration duration;
   final Widget background;
-  final VoidCallback changeTheme;
+  final Function(Brightness) changeTheme;
 
   const WinScreen({
     Key? key,
@@ -189,7 +189,7 @@ class _WinScreenState extends State<WinScreen>
                             child: Align(
                               child: Padding(
                                 child: SizedBox(
-                                    width: screenSize.width / 2,
+                                    width: min(screenSize.width * 0.7, 400) * 0.5,
                                     child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,

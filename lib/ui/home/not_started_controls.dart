@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:zpuzzle/app_colors.dart';
+import 'package:zpuzzle/asset_path.dart';
 import 'package:zpuzzle/ui/board_content.dart';
 import 'package:zpuzzle/ui/settings/widget_picker_dialog.dart';
 import 'package:zpuzzle/ui/zpuzzle_title.dart';
@@ -92,9 +93,8 @@ class NotStartedControls extends StatelessWidget {
                                   child: BackgroundWidgetPicker(
                                 crossAxisCount: 2,
                                 baseWidget: const Image(
-                                  image: AssetImage('assets/img/moon.png'),
-                                  fit: BoxFit.cover,
-                                ),
+                                    image: AssetImage(AssetPath.img05),
+                                    fit: BoxFit.cover),
                                 currentlySelectedWidget: selectedWidget,
                                 onBackgroundPicked: onWidgetPicked,
                               )),
@@ -135,9 +135,8 @@ class NotStartedControls extends StatelessWidget {
                                   child: BackgroundWidgetPicker(
                                 crossAxisCount: 2,
                                 baseWidget: const Image(
-                                  image: AssetImage('assets/img/moon.png'),
-                                  fit: BoxFit.cover,
-                                ),
+                                    image: AssetImage(AssetPath.img05),
+                                    fit: BoxFit.cover),
                                 currentlySelectedWidget: selectedWidget,
                                 onBackgroundPicked: onWidgetPicked,
                               )),

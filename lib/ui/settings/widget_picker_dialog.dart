@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../asset_path.dart';
 import 'background_widget_picker.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -24,9 +25,7 @@ class WidgetPickerDialog {
                   crossAxisCount:
                       (MediaQuery.of(context).size.width / 200).round(),
                   baseWidget: const Image(
-                    image: AssetImage('assets/img/moon.png'),
-                    fit: BoxFit.cover,
-                  ),
+                      image: AssetImage(AssetPath.img05), fit: BoxFit.cover),
                   currentlySelectedWidget: currentlySelectedWidget,
                   onBackgroundPicked: (sw) {
                     Future.delayed(const Duration(milliseconds: 300),
