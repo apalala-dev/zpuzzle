@@ -341,6 +341,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
+                    const SizedBox(height: 8),
                     GameProgress(
                       solving: _solving,
                       puzzle: _puzzle,
@@ -382,6 +383,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
+          const SizedBox(height: 8),
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             GameProgress(
               solving: _solving,
@@ -423,8 +425,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             solving: _solving,
             puzzle: _puzzle,
             size: size,
-            listenable: _animationController!.drive(
-                CurveTween(curve: const Interval(0.5, 1.0, curve: Curves.easeInOut))),
+            listenable: _animationController!.drive(CurveTween(
+                curve: const Interval(0.5, 1.0, curve: Curves.easeInOut))),
             giveUp: _giveUp,
             solve: _solve,
             stoppedSolving: () {
@@ -432,6 +434,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 _solving = false;
               });
             },
+            gyroEnabled: _gyroEnabled,
+            gyroChanged: () {
+              setState(() {
+                _gyroEnabled = !_gyroEnabled;
+              });
+            },
+            changeTheme: widget.changeTheme,
           ),
           _space,
         ],

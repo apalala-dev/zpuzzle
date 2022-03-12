@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -75,24 +76,28 @@ class StartedControls extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment:
+                        !kIsWeb && (Platform.isAndroid || Platform.isIOS)
+                            ? MainAxisAlignment.spaceBetween
+                            : MainAxisAlignment.center,
                     children: [
                       const ZPuzzleTitle(),
-                      Material(
-                        child: IconButton(
-                          // iconSize: 36,
-                          color: Colors.white,
-                          onPressed: gyroChanged,
-                          icon: Icon(
-                            gyroEnabled
-                                ? Icons.screen_rotation
-                                : Icons.screen_lock_rotation,
-                            color:
-                                Theme.of(context).textTheme.titleLarge?.color,
+                      if (!kIsWeb && (Platform.isAndroid || Platform.isIOS))
+                        Material(
+                          child: IconButton(
+                            // iconSize: 36,
+                            color: Colors.white,
+                            onPressed: gyroChanged,
+                            icon: Icon(
+                              gyroEnabled
+                                  ? Icons.screen_rotation
+                                  : Icons.screen_lock_rotation,
+                              color:
+                                  Theme.of(context).textTheme.titleLarge?.color,
+                            ),
                           ),
-                        ),
-                        color: Colors.transparent,
-                      )
+                          color: Colors.transparent,
+                        )
                     ]),
                 SizedBox(
                   child: _renderSelectedWidget(context),

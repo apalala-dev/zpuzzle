@@ -67,7 +67,7 @@ class AnimatedBoardWidget extends AnimatedWidget {
         rotationX: yTilt,
         alignment: Alignment.center,
         perspective: 0.5,
-        depth: 30,
+        depth: 20,
         direction: ZDirection.forwards,
         layers: 11,
         midChild: botChild,

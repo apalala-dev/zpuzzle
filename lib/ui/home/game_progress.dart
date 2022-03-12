@@ -130,7 +130,7 @@ class GameProgress extends AnimatedWidget {
         rotationY: yTilt,
         depth: 20,
         direction: ZDirection.forwards,
-        layers: 5,
+        layers: 11,
         alignment: Alignment.center,
       ),
       scale: scale,

@@ -177,14 +177,20 @@ class _BackgroundWidgetPickerState extends State<BackgroundWidgetPicker>
     _backgrounds.insert(0, widget.baseWidget);
     _animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 300));
-    _selectedBackground = widget.currentlySelectedWidget != null
-        ? _backgrounds.indexWhere((w) =>
-            w == widget.currentlySelectedWidget! ||
-            w.key != null && w.key == widget.currentlySelectedWidget!.key)
-        : -1;
-    if (_selectedBackground == -1 && widget.currentlySelectedWidget != null) {
-      _backgrounds.add(widget.currentlySelectedWidget!);
-      _selectedBackground = _backgrounds.length - 1;
+    if (widget.baseWidget.key == widget.currentlySelectedWidget?.key) {
+      _selectedBackground = 1;
+    } else {
+      _selectedBackground = widget.currentlySelectedWidget != null
+          ? _backgrounds.indexWhere((w) =>
+              w == widget.currentlySelectedWidget! ||
+              w.key != null && w.key == widget.currentlySelectedWidget!.key)
+          : -1;
+      if (_selectedBackground == -1 && widget.currentlySelectedWidget != null) {
+        _backgrounds.add(widget.currentlySelectedWidget!);
+        _selectedBackground = _backgrounds.length - 1;
+      } else {
+        _selectedBackground++;
+      }
     }
     _animateSelection(-1, _selectedBackground, updateUi: false);
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {

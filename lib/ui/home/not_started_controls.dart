@@ -44,7 +44,7 @@ class NotStartedControls extends StatelessWidget {
             decoration: BoxDecoration(
                 color: Theme.of(context).brightness == Brightness.dark
                     ? AppColors.boardOuterColor(context).withOpacity(0.3)
-                    : AppColors.boardInnerColor(context).withOpacity(0.3),
+                    : Colors.white54,
                 borderRadius: BorderRadius.circular(size.shortestSide / 10)),
             child: Column(children: [
               space,

@@ -50,6 +50,15 @@ dependencies:
 
 dev_dependencies:
   test: ^1.20.1
+  flutter_launcher_icons_maker: "^0.10.1"
+
+flutter_icons:
+  android: true
+  ios: true
+  macos: true
+  windows: true
+  web: true
+  image_path: "assets/img/app_icon.png"
 
 flutter:
   uses-material-design: true
