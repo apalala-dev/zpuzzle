@@ -45,10 +45,8 @@ dependencies:
   share_plus: ^3.1.0
   sensors_plus: ^1.2.1
   url_strategy: ^0.2.0
+  zwidget: ^0.0.1
 
-
-  zwidget:
-    path: ../zwidget
 
 dev_dependencies:
   test: ^1.20.1
