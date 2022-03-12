@@ -50,8 +50,6 @@ class FitOrScaleWidget extends StatelessWidget {
                     height: minHeight,
                   )),
               scale: constraints.maxHeight / minHeight);
-          return Transform.scale(
-              child: child, scale: constraints.maxHeight / minHeight);
         }
       }
     });

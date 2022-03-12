@@ -23,6 +23,7 @@ import 'app_colors.dart';
 import 'model/position.dart';
 import 'model/puzzle_solver.dart';
 import 'model/puzzle.dart';
+import 'ui/home/started_controls_buttons.dart';
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback changeTheme;
@@ -50,7 +51,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   bool _showIndicator = true;
 
   bool _solving = false;
-  Widget? _selectedWidget;
+  Widget _selectedWidget = const Image(
+    image: AssetImage('assets/img/moon.png'),
+    fit: BoxFit.cover,
+  );
   late Puzzle _puzzle;
   int _puzzleSize = 3;
 
@@ -143,20 +147,26 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       } else {
                         return Center(
                             child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 600),
+                          constraints: const BoxConstraints(maxWidth: 800),
                           child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                AnimatedBuilder(
+                                SizedBox(height: size.height / 50),
+                                Expanded(
+                                    child: AnimatedBuilder(
                                   child: NotStartedControls(
                                     size: size,
+                                    puzzleSize: _puzzleSize,
+                                    selectedWidget: _selectedWidget,
                                     onWidgetPicked: (newWidget) {
                                       setState(() {
                                         _selectedWidget = newWidget;
                                       });
                                     },
                                     onPuzzleSizePicked: (size) {
-                                      _puzzleSize = size;
+                                      setState(() {
+                                        _puzzleSize = size;
+                                      });
                                     },
                                     onStart: () {
                                       _initPuzzle(puzzleOnly: true);
@@ -172,7 +182,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                     );
                                   },
                                   animation: _settingsController!,
-                                ),
+                                )),
                                 SizedBox(height: size.height / 50),
                                 Row(
                                     crossAxisAlignment:
@@ -372,7 +382,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _space,
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             GameProgress(
               solving: _solving,
@@ -410,6 +419,21 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           Flexible(
             child: _gameContent(size),
           ),
+          StartedControlsButtons(
+            solving: _solving,
+            puzzle: _puzzle,
+            size: size,
+            listenable: _animationController!.drive(
+                CurveTween(curve: const Interval(0.5, 1.0, curve: Curves.easeInOut))),
+            giveUp: _giveUp,
+            solve: _solve,
+            stoppedSolving: () {
+              setState(() {
+                _solving = false;
+              });
+            },
+          ),
+          _space,
         ],
       ));
     }
@@ -433,7 +457,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     contentSize: contentSize,
                     boardContentSize: Size(boardContentSize, boardContentSize),
                     onTileMoved: onTileMoved,
-                    selectedTileWidget: _selectedWidget ?? Container(),
+                    selectedTileWidget: _selectedWidget,
                     showIndicator: _showIndicator,
                     botChild: Container(
                       width: boardContentSize,
@@ -462,7 +486,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           boardContentSize:
                               Size(boardContentSize, boardContentSize),
                           onTileMoved: onTileMoved,
-                          selectedTileWidget: _selectedWidget ?? Container(),
+                          selectedTileWidget: _selectedWidget,
                           botChild: Container(
                             width: boardContentSize,
                             height: boardContentSize,
@@ -499,7 +523,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               puzzle: _puzzle,
               duration:
                   _timerKey.currentState?.totalDuration ?? const Duration(),
-              background: _selectedWidget!,
+              background: _selectedWidget,
               changeTheme: widget.changeTheme,
             ),
             transitionsBuilder:

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:slide_puzzle/app_colors.dart';
 import 'package:slide_puzzle/model/puzzle.dart';
 import 'package:slide_puzzle/model/tile.dart';
 import 'package:slide_puzzle/ui/tiles/maybe_move_transition.dart';
@@ -60,7 +61,7 @@ class _BoardContentState extends State<BoardContent> {
                             width: squareSize,
                             height: squareSize,
                             decoration: BoxDecoration(
-                              color: Colors.black,
+                              color: AppColors.perspectiveColor,
                               borderRadius: BorderRadius.circular(
                                   widget.contentSize.shortestSide / 30),
                             )),

@@ -13,7 +13,7 @@ import '../../model/puzzle.dart';
 class GameProgress extends AnimatedWidget {
   final Puzzle puzzle;
   final Size size;
-  final Widget? selectedWidget;
+  final Widget selectedWidget;
   final bool solving;
   final bool showIndicator;
   final VoidCallback giveUp;
@@ -91,16 +91,23 @@ class GameProgress extends AnimatedWidget {
                           color: AppColors.perspectiveColor),
                     ),
                   )
-                : Container(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: size.shortestSide / 40,
-                        vertical: size.shortestSide / 100),
-                    height: max(size.height / 3.2, 180),
-                    width: max(size.shortestSide * 0.8, 260),
-                    decoration: BoxDecoration(
-                        color: AppColors.perspectiveColor,
-                        borderRadius:
-                            BorderRadius.circular(size.shortestSide / 30)),
+                : RepaintBoundary(
+                    child: StartedControls(
+                      size: size,
+                      puzzle: puzzle,
+                      onWidgetPicked: (_) {},
+                      showIndicator: false,
+                      selectedWidget: const SizedBox(),
+                      showIndicatorChanged: showIndicatorChanged,
+                      solving: solving,
+                      timerKey: null,
+                      stoppedSolving: stoppedSolving,
+                      solve: solve,
+                      giveUp: () {},
+                      gyroEnabled: false,
+                      gyroChanged: () {},
+                      isBuildForPerspective: true,
+                    ),
                   )),
         topChild: RepaintBoundary(
           child: StartedControls(

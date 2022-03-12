@@ -47,5 +47,8 @@
       "duration": {}
     }
   },
-  "shareMessageSubject": "ZPuzzle challenge completed"
+  "shareMessageSubject": "ZPuzzle challenge completed",
+  "chooseDifficultyAndBackground": "Choose your difficulty and your puzzle's background",
+  "background": "Background",
+  "difficulty": "Difficulty"
 }

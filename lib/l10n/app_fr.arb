@@ -23,5 +23,8 @@
   "shareScore": "Partage ton score !",
   "shareScoreWithFriends": "Partage le score obtenu sur ce puzzle avec tes amis et défie les.",
   "shareMessage": "J'ai terminé le ZPuzzle challenge avec {nbMoves} en ⏳ {duration} ! https://play-zpuzzle.web.app",
-  "shareMessageSubject": "ZPuzzle challenge réussi"
+  "shareMessageSubject": "ZPuzzle challenge réussi",
+  "chooseDifficultyAndBackground": "Choisis la difficulté et le motif à reproduire",
+  "background" : "Motif",
+  "difficulty": "Difficulté"
 }

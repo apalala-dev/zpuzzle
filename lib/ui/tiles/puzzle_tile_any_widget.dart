@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -83,24 +82,27 @@ class _PuzzleTileWidgetState extends State<PuzzleTileAnyWidget> {
     final Widget content = Container(
       width: widget.tileSize,
       height: widget.tileSize,
-      decoration: kIsWeb
-          ? BoxDecoration(borderRadius: widget.borderRadius, boxShadow: [
-              BoxShadow(
-                  color: AppColors.perspectiveColor,
-                  spreadRadius: widget.tileSize / 100,
-                  offset: Offset(
-                      -(widget.xTilt < 0
-                          ? max(widget.xTilt * 0.05 * widget.tileSize,
-                              -widget.tileSize / 30)
-                          : min(widget.xTilt * 0.05 * widget.tileSize,
-                              widget.tileSize / 30)),
-                      -(widget.yTilt < 0
-                          ? max(widget.yTilt * 0.05 * widget.tileSize,
-                              -widget.tileSize / 30)
-                          : min(widget.yTilt * 0.05 * widget.tileSize,
-                              widget.tileSize / 30))))
-            ])
-          : null,
+      decoration: BoxDecoration(
+          borderRadius: widget.borderRadius,
+          color: Colors.white,
+          boxShadow: kIsWeb
+              ? [
+                  BoxShadow(
+                      color: AppColors.perspectiveColor,
+                      spreadRadius: widget.tileSize / 100,
+                      offset: Offset(
+                          -(widget.xTilt < 0
+                              ? max(widget.xTilt * 0.05 * widget.tileSize,
+                                  -widget.tileSize / 30)
+                              : min(widget.xTilt * 0.05 * widget.tileSize,
+                                  widget.tileSize / 30)),
+                          -(widget.yTilt < 0
+                              ? max(widget.yTilt * 0.05 * widget.tileSize,
+                                  -widget.tileSize / 30)
+                              : min(widget.yTilt * 0.05 * widget.tileSize,
+                                  widget.tileSize / 30))))
+                ]
+              : null),
       child: Stack(children: [
         Positioned.fill(
           child: ClipRRect(
