@@ -1,5 +1,3 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:slide_puzzle/app_colors.dart';
 import 'package:slide_puzzle/model/puzzle.dart';

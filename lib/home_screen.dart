@@ -298,10 +298,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     setState(() {
       _solving = true;
     });
-    print('solving');
+    if (kDebugMode) {
+      print('solving');
+    }
     PuzzleSolver solver = PuzzleSolver();
     var newPuzzle = solver.solve(_puzzle.clone());
-    print("new puzzle solved:\n${newPuzzle.toVisualString()}");
+    if (kDebugMode) {
+      print("new puzzle solved:\n${newPuzzle.toVisualString()}");
+    }
     for (int i = max(_puzzle.history.length - 1, 0);
         i < newPuzzle.history.length;
         i++) {
@@ -309,8 +313,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         break;
       }
       var h = newPuzzle.history[i];
-      print(
-          "Move $i tile ${_puzzle.tiles.firstWhere((element) => element.currentPosition == h).value}");
+      if (kDebugMode) {
+        print(
+            "Move $i tile ${_puzzle.tiles.firstWhere((element) => element.currentPosition == h).value}");
+      }
       await Future.delayed(const Duration(milliseconds: 450));
       onTileMoved(
         _puzzle.tiles.firstWhere((element) => element.currentPosition == h),

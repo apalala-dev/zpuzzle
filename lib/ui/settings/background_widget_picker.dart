@@ -330,7 +330,6 @@ class _BackgroundWidgetPickerState extends State<BackgroundWidgetPicker>
                                 } else {
                                   mimeType = lookupMimeType(tmp.path!);
                                 }
-                                print("mimetype: $mimeType");
                                 if (mimeType != null) {
                                   final fileType = mimeType!.split('/');
                                   final type = fileType[0];

@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:slide_puzzle/model/position.dart';
 import 'package:slide_puzzle/model/puzzle.dart';
 import 'package:slide_puzzle/model/puzzle_solver.dart';
@@ -103,58 +105,6 @@ void main() {
         previousPosition: Position(x: 2, y: 3),
         isWhitespace: true),
   ]);
-
-  test("Tiles order", () {
-    Puzzle puzzle = Puzzle.generate(4);
-    PuzzleSolver solver = PuzzleSolver();
-
-    var dim = puzzle.getDimension();
-
-    Tile toMove;
-    List<Tile> lockedTiles = [];
-
-    int nbRowsToLock = puzzle.getDimension() - 2;
-    int nbColumnsToLock = puzzle.getDimension() - 3;
-
-    var pos3x2 = [
-      Position(x: dim, y: dim),
-      Position(x: dim - 1, y: dim),
-      Position(x: dim - 2, y: dim),
-      Position(x: dim, y: dim - 1),
-      Position(x: dim - 1, y: dim - 1),
-      Position(x: dim - 2, y: dim - 1),
-    ];
-
-    // Part 1
-    // Move tile n°1 to top left corner
-    int idxColumn = 1;
-    int idxRow = 1;
-    for (int i = 1; i <= nbRowsToLock + nbColumnsToLock; i++) {
-      List<Position> posToTake;
-
-      if (i.isOdd) {
-        // Take a Row and handle it
-        posToTake = [
-          for (int x = idxColumn; x <= dim; x++) Position(x: x, y: idxRow)
-        ];
-        idxRow++;
-      } else {
-        // Take a Column and handle it
-        posToTake = [
-          for (int y = idxRow; y <= dim; y++) Position(x: idxColumn, y: y)
-        ];
-        idxColumn++;
-      }
-      print("Take $posToTake");
-
-      for (var p in posToTake) {
-        toMove = puzzle.tiles.firstWhere((e) => e.currentPosition == p);
-        // moveTileToPosition(
-        //     puzzle, toMove, lockedTiles.map((e) => e.currentPosition).toList());
-        lockedTiles.add(toMove);
-      }
-    }
-  });
 
   test("Shortest path test", () {
     Puzzle puzzle = Puzzle.generate(4, shuffle: false);

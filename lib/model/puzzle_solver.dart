@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:slide_puzzle/model/position.dart';
 import 'package:slide_puzzle/model/puzzle.dart';
 import 'package:slide_puzzle/model/tile.dart';
@@ -69,9 +70,6 @@ class PuzzleSolver {
         // Put both in a place where we can move them wherever we need later first
         // Note: this adds more moves
         var bottomRightCorner = Position(x: dim, y: dim);
-        var nextToBottomRightCorner = Position(
-            x: dim + (i.isEven ? 0 : -1), y: dim + (i.isEven ? -1 : 0));
-
         var bottomRightCornerTile = lastTile;
         // var nextToBottomRightCornerTile = puzzle.tiles.firstWhere(
         //     (e) => e.correctPosition == posToTake[posToTake.length - 2]);
@@ -149,7 +147,9 @@ class PuzzleSolver {
       // print("we're good to go for the 3x2 grid");
     }
     // return puzzle;
-    print("History before solving 3x2: ${puzzle.history.length}");
+    if (kDebugMode) {
+      print("History before solving 3x2: ${puzzle.history.length}");
+    }
     return solve3x2(puzzle);
   }
 
@@ -254,8 +254,6 @@ class PuzzleSolver {
     // Other tiles should be placed correctly automatically
     return moveWhiteTileTo(
         puzzle, puzzle.getWhitespaceTile().correctPosition, locked);
-
-    return puzzle;
   }
 
   Puzzle solve3x2old(Puzzle puzzle) {
@@ -465,7 +463,9 @@ class PuzzleSolver {
         lockedPositions,
         puzzle.getDimension());
     if (pathWhiteToP == null) {
-      print(puzzle);
+      if (kDebugMode) {
+        print(puzzle);
+      }
       throw Exception(
           "Can't find path between WhiteSpace and ${puzzle.tiles.firstWhere((t) => t.currentPosition == dest).value}.\nLockedTiles:${lockedPositions.map((p) => puzzle.tiles.firstWhere((t) => p == t.currentPosition).value)}\n${puzzle.toVisualString()}");
     }
