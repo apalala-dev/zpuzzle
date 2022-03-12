@@ -1,8 +1,8 @@
 import 'dart:math';
 
 import 'package:equatable/equatable.dart';
-import 'package:slide_puzzle/model/position.dart';
-import 'package:slide_puzzle/model/tile.dart';
+import 'package:zpuzzle/model/position.dart';
+import 'package:zpuzzle/model/tile.dart';
 
 // A 3x3 puzzle board visualization:
 //

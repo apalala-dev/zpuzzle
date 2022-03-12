@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:slide_puzzle/ui/timer_widget.dart';
+import 'package:zpuzzle/ui/timer_widget.dart';
 
 import '../../app_colors.dart';
 import '../../model/puzzle.dart';

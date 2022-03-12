@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:equatable/equatable.dart';
-import 'package:slide_puzzle/model/position.dart';
+import 'package:zpuzzle/model/position.dart';
 
 /// {@template tile}
 /// Model for a puzzle tile.

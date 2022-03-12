@@ -1,9 +1,9 @@
 // ignore_for_file: avoid_print
 
-import 'package:slide_puzzle/model/position.dart';
-import 'package:slide_puzzle/model/puzzle.dart';
-import 'package:slide_puzzle/model/puzzle_solver.dart';
-import 'package:slide_puzzle/model/tile.dart';
+import 'package:zpuzzle/model/position.dart';
+import 'package:zpuzzle/model/puzzle.dart';
+import 'package:zpuzzle/model/puzzle_solver.dart';
+import 'package:zpuzzle/model/tile.dart';
 import 'package:test/test.dart';
 
 void main() {

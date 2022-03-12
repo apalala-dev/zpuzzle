@@ -3,10 +3,10 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:slide_puzzle/app_colors.dart';
-import 'package:slide_puzzle/ui/board_content.dart';
-import 'package:slide_puzzle/ui/settings/widget_picker_dialog.dart';
-import 'package:slide_puzzle/ui/zpuzzle_title.dart';
+import 'package:zpuzzle/app_colors.dart';
+import 'package:zpuzzle/ui/board_content.dart';
+import 'package:zpuzzle/ui/settings/widget_picker_dialog.dart';
+import 'package:zpuzzle/ui/zpuzzle_title.dart';
 
 import '../../model/puzzle.dart';
 import '../settings/background_widget_picker.dart';

@@ -1,10 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.apalala.slide_puzzle">
+    package="com.apalala.zpuzzle">
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
-        android:label="slide_puzzle"
+        android:label="ZPuzzle"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

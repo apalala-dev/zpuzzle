@@ -2,10 +2,10 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:slide_puzzle/model/puzzle.dart';
-import 'package:slide_puzzle/model/tile.dart';
-import 'package:slide_puzzle/ui/board_content.dart';
-import 'package:slide_puzzle/ui/zwidget_wrapper.dart';
+import 'package:zpuzzle/model/puzzle.dart';
+import 'package:zpuzzle/model/tile.dart';
+import 'package:zpuzzle/ui/board_content.dart';
+import 'package:zpuzzle/ui/zwidget_wrapper.dart';
 import 'package:zwidget/zwidget.dart';
 
 import '../app_colors.dart';

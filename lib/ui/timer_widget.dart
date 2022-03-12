@@ -3,7 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:slide_puzzle/utils.dart';
+import 'package:zpuzzle/utils.dart';
 
 class TimerWidget extends StatefulWidget {
   const TimerWidget({Key? key}) : super(key: key);

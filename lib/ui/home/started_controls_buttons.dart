@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:slide_puzzle/model/puzzle.dart';
+import 'package:zpuzzle/model/puzzle.dart';
 
 class StartedControlsButtons extends AnimatedWidget {
   final bool solving;

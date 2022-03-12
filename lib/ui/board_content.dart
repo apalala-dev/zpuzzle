@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:slide_puzzle/app_colors.dart';
-import 'package:slide_puzzle/model/puzzle.dart';
-import 'package:slide_puzzle/model/tile.dart';
-import 'package:slide_puzzle/ui/tiles/maybe_move_transition.dart';
-import 'package:slide_puzzle/ui/tiles/puzzle_tile_any_widget.dart';
-import 'package:slide_puzzle/ui/zwidget_wrapper.dart';
+import 'package:zpuzzle/app_colors.dart';
+import 'package:zpuzzle/model/puzzle.dart';
+import 'package:zpuzzle/model/tile.dart';
+import 'package:zpuzzle/ui/tiles/maybe_move_transition.dart';
+import 'package:zpuzzle/ui/tiles/puzzle_tile_any_widget.dart';
+import 'package:zpuzzle/ui/zwidget_wrapper.dart';
 import 'package:zwidget/zwidget.dart';
 
 class BoardContent extends StatefulWidget {

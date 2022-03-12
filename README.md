@@ -1,4 +1,4 @@
-# slide_puzzle
+# zpuzzle
 
 A new Flutter project.
 

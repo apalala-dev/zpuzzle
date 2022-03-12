@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:slide_puzzle/asset_path.dart';
+import 'package:zpuzzle/asset_path.dart';
 
 class ZPuzzleTitle extends StatelessWidget {
   final double sizeMultiplier;

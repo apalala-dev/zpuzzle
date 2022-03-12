@@ -6,7 +6,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_color/flutter_color.dart';
-import 'package:slide_puzzle/ui/background/moving_star.dart';
+import 'package:zpuzzle/ui/background/moving_star.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 
 import '../../model/puzzle.dart';

@@ -11,11 +11,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:mime/mime.dart';
 import 'package:rive/rive.dart' as rive;
-import 'package:slide_puzzle/asset_path.dart';
-import 'package:slide_puzzle/home_screen.dart';
-import 'package:slide_puzzle/rive/rive-animation-bytes.dart';
-import 'package:slide_puzzle/ui/fit_or_scale_widget.dart';
-import 'package:slide_puzzle/ui/zwidget_wrapper.dart';
+import 'package:zpuzzle/asset_path.dart';
+import 'package:zpuzzle/home_screen.dart';
+import 'package:zpuzzle/rive/rive-animation-bytes.dart';
+import 'package:zpuzzle/ui/fit_or_scale_widget.dart';
+import 'package:zpuzzle/ui/zwidget_wrapper.dart';
 import 'package:zwidget/zwidget.dart';
 
 import '../pickable_widgets/basic_app.dart';

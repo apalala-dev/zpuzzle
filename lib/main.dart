@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_color/flutter_color.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:slide_puzzle/app_colors.dart';
-import 'package:slide_puzzle/home_screen.dart';
+import 'package:zpuzzle/app_colors.dart';
+import 'package:zpuzzle/home_screen.dart';
 
 Future<void> main() async {
   runApp(const MyApp());

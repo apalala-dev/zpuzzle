@@ -2,9 +2,9 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:slide_puzzle/asset_path.dart';
-import 'package:slide_puzzle/model/tile.dart';
-import 'package:slide_puzzle/ui/tiles/maybe_show_indicator.dart';
+import 'package:zpuzzle/asset_path.dart';
+import 'package:zpuzzle/model/tile.dart';
+import 'package:zpuzzle/ui/tiles/maybe_show_indicator.dart';
 
 import '../../app_colors.dart';
 

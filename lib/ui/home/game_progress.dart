@@ -3,9 +3,9 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:slide_puzzle/app_colors.dart';
-import 'package:slide_puzzle/ui/home/started_controls.dart';
-import 'package:slide_puzzle/ui/zwidget_wrapper.dart';
+import 'package:zpuzzle/app_colors.dart';
+import 'package:zpuzzle/ui/home/started_controls.dart';
+import 'package:zpuzzle/ui/zwidget_wrapper.dart';
 import 'package:zwidget/zwidget.dart';
 
 import '../../model/puzzle.dart';

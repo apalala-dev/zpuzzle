@@ -1,6 +1,6 @@
 {
-    "name": "slide_puzzle",
-    "short_name": "slide_puzzle",
+    "name": "zpuzzle",
+    "short_name": "zpuzzle",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:slide_puzzle/ui/background/fog_particle.dart';
+import 'package:zpuzzle/ui/background/fog_particle.dart';
 
 import '../../app_colors.dart';
 

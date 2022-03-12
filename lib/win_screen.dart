@@ -7,11 +7,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:open_file/open_file.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:slide_puzzle/asset_path.dart';
-import 'package:slide_puzzle/home_screen.dart';
-import 'package:slide_puzzle/ui/animated_board_widget.dart';
-import 'package:slide_puzzle/ui/fit_or_scale_widget.dart';
-import 'package:slide_puzzle/utils.dart';
+import 'package:zpuzzle/asset_path.dart';
+import 'package:zpuzzle/home_screen.dart';
+import 'package:zpuzzle/ui/animated_board_widget.dart';
+import 'package:zpuzzle/ui/fit_or_scale_widget.dart';
+import 'package:zpuzzle/utils.dart';
 
 import 'app_colors.dart';
 import 'model/puzzle.dart';
