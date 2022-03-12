@@ -27,10 +27,6 @@ dependencies:
     sdk: flutter
 
   analog_clock: ^0.1.0
-#  blobs: ^2.0.0
-  crop_your_image: ^0.6.0+1
-#  drawing_animation:
-#    git: https://github.com/abbasghomi/drawing_animation.git
   equatable: ^2.0.3
   file_picker: ^4.3.3
   file_saver: ^0.1.0
@@ -38,12 +34,9 @@ dependencies:
   flutter_color: ^2.0.0
   flutter_map: ^0.14.0
   flutter_svg: ^1.0.3
-  #  funvas: ^0.1.6+6
   google_fonts: ^2.3.1
-  image_size_getter: ^1.0.0
   intl: ^0.17.0
   latlong2: ^0.8.1
-  leak_detector: ^1.0.1+3
   mime: ^1.0.1
   open_file: ^3.2.1
   responsive_framework: ^0.1.7
@@ -51,8 +44,6 @@ dependencies:
   screenshot: ^1.2.3
   share_plus: ^3.1.0
   sensors_plus: ^1.2.1
-  simple_animations: ^3.1.1
-  supercharged: ^2.0.0
 
   zwidget:
     path: ../zwidget

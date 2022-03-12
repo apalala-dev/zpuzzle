@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:supercharged_dart/supercharged_dart.dart';
 
 class MovingStar {
   Offset basePosition;
@@ -48,7 +47,7 @@ class MovingStar {
   bool willIntersect(Rect canvasRect, int currentTimer) {
     Offset currentPos = calculatedPosition(currentTimer);
     Offset laterPos =
-        calculatedPosition(currentTimer + 5.seconds.inMilliseconds);
+        calculatedPosition(currentTimer + const Duration(seconds:5).inMilliseconds);
     Path p = Path();
     p.moveTo(currentPos.dx, currentPos.dy);
     p.lineTo(laterPos.dx, laterPos.dy);

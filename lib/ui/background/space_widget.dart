@@ -6,8 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_color/flutter_color.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:slide_puzzle/ui/background/moving_star.dart';
-import 'package:supercharged/supercharged.dart';
-import 'package:supercharged_dart/supercharged_dart.dart';
 
 class SpaceWidget extends StatefulWidget {
   const SpaceWidget({Key? key, required this.title}) : super(key: key);
@@ -45,8 +43,9 @@ class _SpaceWidgetState extends State<SpaceWidget> {
         ));
       }
 
-      var nbMillisEachTick = (1.seconds.inMilliseconds / 60).round();
-      refreshTimer = Timer.periodic(nbMillisEachTick.milliseconds, (timer) {
+      var nbMillisEachTick = (Duration(seconds: 1).inMilliseconds / 60).round();
+      refreshTimer =
+          Timer.periodic(Duration(milliseconds: nbMillisEachTick), (timer) {
         setState(() {
           _timeSpent = timer.tick * nbMillisEachTick;
           // _timeSpent = 0;

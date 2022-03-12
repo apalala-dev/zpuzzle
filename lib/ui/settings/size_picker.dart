@@ -1,9 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_color/flutter_color.dart';
-import 'package:slide_puzzle/app_colors.dart';
-import 'package:supercharged_dart/supercharged_dart.dart';
 
 class SizePicker extends StatefulWidget {
   final Function(int) onSizePicked;
