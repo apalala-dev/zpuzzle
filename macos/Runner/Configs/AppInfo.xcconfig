@@ -5,10 +5,10 @@
 // 'flutter create' template.
 
 // The application's name. By default this is also the title of the Flutter window.
-PRODUCT_NAME = zpuzzle
+PRODUCT_NAME = ZPuzzle
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.apalala.slidePuzzle
+PRODUCT_BUNDLE_IDENTIFIER = com.apalala.zpuzzle
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2022 com.apalala. All rights reserved.
