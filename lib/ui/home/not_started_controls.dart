@@ -56,9 +56,11 @@ class NotStartedControls extends StatelessWidget {
               Padding(
                 child: Text(
                   AppLocalizations.of(context)!.chooseDifficultyAndBackground,
+                  textAlign: TextAlign.center,
                   style: TextStyle(fontSize: min(size.shortestSide / 24, 20)),
                 ),
-                padding: EdgeInsets.symmetric(vertical: size.height / 80),
+                padding: EdgeInsets.symmetric(
+                    vertical: size.height / 80, horizontal: 8),
               ),
               Expanded(
                   child: Padding(
@@ -94,6 +96,7 @@ class NotStartedControls extends StatelessWidget {
                                   child: BackgroundWidgetPicker(
                                 crossAxisCount: 2,
                                 baseWidget: const Image(
+                                    key: ValueKey('img05'),
                                     image: AssetImage(AssetPath.img05),
                                     fit: BoxFit.cover),
                                 currentlySelectedWidget: selectedWidget,
@@ -137,6 +140,7 @@ class NotStartedControls extends StatelessWidget {
                                   child: BackgroundWidgetPicker(
                                 crossAxisCount: 2,
                                 baseWidget: const Image(
+                                    key: ValueKey('img05'),
                                     image: AssetImage(AssetPath.img05),
                                     fit: BoxFit.cover),
                                 currentlySelectedWidget: selectedWidget,

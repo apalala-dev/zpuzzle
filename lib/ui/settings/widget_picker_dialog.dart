@@ -25,7 +25,9 @@ class WidgetPickerDialog {
                   crossAxisCount:
                       (MediaQuery.of(context).size.width / 200).round(),
                   baseWidget: const Image(
-                      image: AssetImage(AssetPath.img05), fit: BoxFit.cover),
+                      key: ValueKey('img05'),
+                      image: AssetImage(AssetPath.img05),
+                      fit: BoxFit.cover),
                   currentlySelectedWidget: currentlySelectedWidget,
                   onBackgroundPicked: (sw) {
                     Future.delayed(const Duration(milliseconds: 300),

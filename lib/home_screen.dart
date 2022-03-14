@@ -51,8 +51,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   bool _showIndicator = true;
 
   bool _solving = false;
-  Widget _selectedWidget =
-      const Image(image: AssetImage(AssetPath.img05), fit: BoxFit.cover);
+  Widget _selectedWidget = const Image(
+      key: ValueKey('img05'),
+      image: AssetImage(AssetPath.img05),
+      fit: BoxFit.cover);
   late Puzzle _puzzle;
   int _puzzleSize = 3;
 
@@ -491,7 +493,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 : StreamBuilder<GyroscopeEvent>(
                     initialData: GyroscopeEvent(0, 0, 0),
                     stream: gyroscopeEvents
-                        .where((event) => event.x != 0 && event.y != 0),
+                        .where((event) => event.x != 0 || event.y != 0),
                     builder: (context, snapshot) {
                       _gyro += Offset(degToRadian(snapshot.data?.y ?? 0),
                           degToRadian(snapshot.data?.x ?? 0));

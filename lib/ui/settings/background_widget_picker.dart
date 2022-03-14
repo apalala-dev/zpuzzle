@@ -24,7 +24,7 @@ import '../pickable_widgets/basic_app.dart';
 class BackgroundWidgetPicker extends StatefulWidget {
   final Widget baseWidget;
   final Function(Widget) onBackgroundPicked;
-  final Widget? currentlySelectedWidget;
+  final Widget currentlySelectedWidget;
   final int crossAxisCount;
 
   // final RiveAnimationController riveAnimationController;
@@ -34,7 +34,7 @@ class BackgroundWidgetPicker extends StatefulWidget {
     required this.baseWidget,
     required this.onBackgroundPicked,
     required this.crossAxisCount,
-    this.currentlySelectedWidget,
+    required this.currentlySelectedWidget,
     // required this.riveAnimationController,
   }) : super(key: key);
 
@@ -100,8 +100,14 @@ class _BackgroundWidgetPickerState extends State<BackgroundWidgetPicker>
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight)),
       ),
-    const Image(image: AssetImage(AssetPath.img01), fit: BoxFit.cover),
-    const Image(image: AssetImage(AssetPath.img02), fit: BoxFit.cover),
+    const Image(
+        key: ValueKey('img01'),
+        image: AssetImage(AssetPath.img01),
+        fit: BoxFit.cover),
+    const Image(
+        key: ValueKey('img02'),
+        image: AssetImage(AssetPath.img02),
+        fit: BoxFit.cover),
     AnalogClock(
       key: const ValueKey('clockKey'),
       decoration: BoxDecoration(
@@ -130,8 +136,14 @@ class _BackgroundWidgetPickerState extends State<BackgroundWidgetPicker>
         absorbing: true,
       ),
     ),
-    const Image(image: AssetImage(AssetPath.img03), fit: BoxFit.cover),
-    const Image(image: AssetImage(AssetPath.img04), fit: BoxFit.cover),
+    const Image(
+        key: ValueKey('img03'),
+        image: AssetImage(AssetPath.img03),
+        fit: BoxFit.cover),
+    const Image(
+        key: ValueKey('img04'),
+        image: AssetImage(AssetPath.img04),
+        fit: BoxFit.cover),
     AbsorbPointer(
       key: const ValueKey('zMap'),
       child: FlutterMap(
@@ -155,7 +167,10 @@ class _BackgroundWidgetPickerState extends State<BackgroundWidgetPicker>
         ],
       ),
     ),
-    const Image(image: AssetImage(AssetPath.img06), fit: BoxFit.cover),
+    const Image(
+        key: ValueKey('img06'),
+        image: AssetImage(AssetPath.img06),
+        fit: BoxFit.cover),
     Container(
       key: const ValueKey('zGirlStudent'),
       child: const Center(
@@ -231,7 +246,10 @@ class _BackgroundWidgetPickerState extends State<BackgroundWidgetPicker>
           gradient: RadialGradient(colors: [Colors.white, Colors.amber]),
         ),
       ),
-    const Image(image: AssetImage(AssetPath.dashonaut), fit: BoxFit.cover),
+    const Image(
+        key: ValueKey('dashonaut'),
+        image: AssetImage(AssetPath.dashonaut),
+        fit: BoxFit.cover),
     if (false)
       FitOrScaleWidget(
         key: const ValueKey('homeScreenKey'),
@@ -255,16 +273,14 @@ class _BackgroundWidgetPickerState extends State<BackgroundWidgetPicker>
     _backgrounds.insert(0, widget.baseWidget);
     _animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 300));
-    if (widget.baseWidget.key == widget.currentlySelectedWidget?.key) {
+    if (widget.baseWidget.key == widget.currentlySelectedWidget.key) {
       _selectedBackground = 1;
     } else {
-      _selectedBackground = widget.currentlySelectedWidget != null
-          ? _backgrounds.indexWhere((w) =>
-              w == widget.currentlySelectedWidget! ||
-              w.key != null && w.key == widget.currentlySelectedWidget!.key)
-          : -1;
-      if (_selectedBackground == -1 && widget.currentlySelectedWidget != null) {
-        _backgrounds.add(widget.currentlySelectedWidget!);
+      _selectedBackground = _backgrounds.indexWhere((w) =>
+          w == widget.currentlySelectedWidget ||
+          w.key != null && w.key == widget.currentlySelectedWidget.key);
+      if (_selectedBackground == -1) {
+        _backgrounds.add(widget.currentlySelectedWidget);
         _selectedBackground = _backgrounds.length - 1;
       } else {
         _selectedBackground++;
