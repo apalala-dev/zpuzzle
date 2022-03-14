@@ -10,9 +10,9 @@ Its core features are:
 - **Correct position indicators**: They point towards the correct position of each tile.
 - **Auto-solve**: An easy to learn approach is used so the player can reproduce it.
 - **Responsive design**: Looks well on almost any screen size.
-- **Multiplatform**: Works on Mobile, Desktop and Web (with limitations on the Web)
-- **Inputs**: Play the puzzle with your mouse or keyboard on Desktop and Web or by tapping on the tiles on
-  Mobile
+- **Multi-Platform**: Works on Mobile, Desktop and Web (with limitations on the Web)
+- **Inputs**: Play the puzzle with your mouse or keyboard on Desktop and Web or by tapping on the
+  tiles on Mobile
 - **Gyroscope**: Use the gyroscope to see the 3D effect in action on Mobile
 
 Find the details of each feature below.
@@ -86,8 +86,25 @@ on it. Font sizes are based on these measures until a minimal width and height w
 whole interface instead. This way, the UI keeps looking well on almost any screen size. I made a
 specific widget for the scale feature: `FitOrScaleWidget` that again also uses `OverflowBox`
 and `LayoutBuilder`.
-
-## Multiplatform
+Stack(children: [
+  Positioned.fill(
+    child: ClipRRect(
+      borderRadius: widget.borderRadius,
+      child: OverflowBox(
+        maxWidth: double.infinity,
+        maxHeight: double.infinity,
+        alignment: fracOff,
+        child: SizedBox(
+          child: widget.child,
+          height: nbTiles * widget.tileSize,
+          width: nbTiles * widget.tileSize,
+        ),
+      ),
+    ),
+  ),
+  Center(child: indicator),
+])
+## Multi-Platform
 
 ZPuzzle works well on Mobile, Desktop and Web.
 
@@ -104,26 +121,25 @@ cost me a lot of time. The use of a lot of animations and/or a lot of widgets ma
 unresponsive. Even displaying a simple Gif could lead to unresponsiveness without much logs. It
 seemed to be (at least partially) related
 to [an issue](https://github.com/flutter/flutter/issues/98275) on the Skia engine. As a workaround,
-I disabled the use of my package `ZWidget` on Web since it draws a lot of widgets and used shadows
-instead where applicable. I don't think it solves every case, but most of my tests ran well after
-that.
+I finally disabled the use of my package `ZWidget` on Web since it draws a lot of widgets and used
+shadows instead where applicable. My tests ran well after that. A later fix to the Skia engine might
+allow me to enable again `ZWidget` on the Web.
 
 The Web platform has other problems: for instance, we can't use `Isolates`. I also had to use the
-canvasKit renderer to prevent issues with the html renderer and general performances are lower than
+CanvasKit renderer to prevent issues with the HTML renderer and general performances are lower than
 on other platforms.
 
 Despite the issues on the Web, I was quite happy and proud to be able to build once for every
 platform with only occasional changes for each. I will definitively consider building more apps for
-Desktop and Web. I hope that the later one will getting better and better and especially that our
-Flutter web apps will become more SEO friendly.
+Desktop and Web.
 
 ## Inputs
 
-Flutter handles pretty well the use of the mouse in addition to touch controls with the InkWell
+Flutter handles pretty well the use of the mouse in addition to touch controls with the `InkWell`
 widgets. It just worked out of the box which is really nice!
 
 I added the use of the arrow keys to move the tiles on platforms that support it (mostly Desktop and
-Web). The process was quite easy and it ran well very quickly.
+Web). The process was quite easy and it ran well quickly.
 
 ## Gyroscope
 

@@ -5,11 +5,13 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PuzzleSizePicker extends StatefulWidget {
   final bool horizontal;
+  final int baseSize;
   final Function(int) onSizePicked;
 
   const PuzzleSizePicker({
     Key? key,
     required this.onSizePicked,
+    required this.baseSize,
     required this.horizontal,
   }) : super(key: key);
 
@@ -31,6 +33,7 @@ class _PuzzleSizePickerState extends State<PuzzleSizePicker>
     super.initState();
     _animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 300));
+    _selectedDimension = _dimensions.indexOf(widget.baseSize);
     _animateSelection(-1, _selectedDimension, updateUi: false);
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       _animationController.forward();

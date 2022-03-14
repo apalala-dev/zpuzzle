@@ -68,6 +68,7 @@ class NotStartedControls extends StatelessWidget {
                           constraints: const BoxConstraints(maxWidth: 100),
                           child: PuzzleSizePicker(
                             onSizePicked: onPuzzleSizePicked,
+                            baseSize: puzzleSize,
                             horizontal: false,
                           ),
                         ),
@@ -109,6 +110,7 @@ class NotStartedControls extends StatelessWidget {
                               maxHeight: size.height / 10),
                           child: PuzzleSizePicker(
                             onSizePicked: onPuzzleSizePicked,
+                            baseSize: puzzleSize,
                             horizontal: true,
                           ),
                         ),
