@@ -6,15 +6,13 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_color/flutter_color.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:mime/mime.dart';
 import 'package:rive/rive.dart' as rive;
 import 'package:zpuzzle/asset_path.dart';
-import 'package:zpuzzle/home_screen.dart';
-import 'package:zpuzzle/rive/rive-animation-bytes.dart';
+import 'package:zpuzzle/rive/rive_animation_bytes.dart';
 import 'package:zpuzzle/ui/fit_or_scale_widget.dart';
 import 'package:zpuzzle/ui/zwidget_wrapper.dart';
 import 'package:zwidget/zwidget.dart';
@@ -250,16 +248,6 @@ class _BackgroundWidgetPickerState extends State<BackgroundWidgetPicker>
         key: ValueKey('dashonaut'),
         image: AssetImage(AssetPath.dashonaut),
         fit: BoxFit.cover),
-    if (false)
-      FitOrScaleWidget(
-        key: const ValueKey('homeScreenKey'),
-        minWidth: 600,
-        minHeight: 400,
-        child: AbsorbPointer(
-          child: HomeScreen(changeTheme: (_) {}),
-          absorbing: true,
-        ),
-      )
   ];
   int _selectedBackground = 0;
   PlatformFile? _pickedFile;
@@ -410,6 +398,7 @@ class _BackgroundWidgetPickerState extends State<BackgroundWidgetPicker>
                                       fit: BoxFit.cover,
                                     ));
                               } else if (false && tmp.extension == 'riv') {
+                                // Rive implementation is not finished yet
                                 _pickedFile = tmp;
                                 final rivFile = rive.RiveFile.import(
                                     ByteData.sublistView(_pickedFile!.bytes!));

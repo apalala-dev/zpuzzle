@@ -24,6 +24,8 @@ class PuzzleTileAnyWidget extends StatefulWidget {
   final Widget child;
   final BorderRadius borderRadius;
   final bool showIndicator;
+  // TODO include a RiveAnimationController to sync tiles when using Rive
+  // final RiveAnimationController? riveAnimationController;
 
   const PuzzleTileAnyWidget(
     this.tile, {
